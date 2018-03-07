@@ -31,7 +31,7 @@ contract Lockable {
     // or unlocked state, then acts and updates accordingly if
     // necessary
     modifier checkLock {
-        require(lockaddress[msg.sender]);
+        assert(!lockaddress[msg.sender]);
         _;
     }
 

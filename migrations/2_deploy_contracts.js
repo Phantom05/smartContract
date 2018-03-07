@@ -1,11 +1,9 @@
-var Wallet = artifacts.require("./wallet/Wallet.sol");
-var IcxToken = artifacts.require("./token/YeedToken.sol");
-var IconCrawSale = artifacts.require("./ico/YggdrashCrowdSale.sol");
+var YeedToken = artifacts.require("./token/YeedToken.sol");
+var YggdrashCrowdSale = artifacts.require("./ico/YggdrashCrowdSale.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(Wallet);
-  deployer.deploy(IcxToken, "400340000000000000000000000", Wallet);
-  deployer.deploy(IconCrawSale, Wallet, "400340000000000000000000000", 2500);
+  deployer.deploy(YeedToken, "400340000000000000000000000");
+  deployer.deploy(YggdrashCrowdSale, Wallet, "400340000000000000000000000", 2500);
 
 
 
