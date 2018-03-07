@@ -78,7 +78,6 @@ contract YeedToken is ERC20, Lockable {
 
     function approve(address spender, uint value)
     public
-    isTokenTransfer
     checkLock
     returns (bool success) {
         _approvals[msg.sender][spender] = value;
@@ -88,8 +87,8 @@ contract YeedToken is ERC20, Lockable {
 
     // burnToken burn tokensAmount for sender balance
     function burnTokens(uint tokensAmount)
+    public
     isTokenTransfer
-    external
     {
         require( _balances[msg.sender] >= tokensAmount );
 
