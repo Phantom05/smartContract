@@ -5,14 +5,14 @@ import "../util/SafeMath.sol";
     YGGDRASH CROWD SALE SmartContract
     @author Peter Ryu - <odin@yggdrash.io>
 */
-contract YggdrashCrowdSale {
+contract YggdrashCrowd {
     using SafeMath for uint;
     ERC20 public yeedToken;
     Stages stage;
     address public wallet;
     address public owner;
     address public tokenOwner;
-    uint public saleAmount;    // sale Token amount
+    uint public totalAmount;    // sale Token amount
     uint public priceFactor; // ratio
     uint public startBlock;
     uint public totalReceived;
@@ -34,8 +34,8 @@ contract YggdrashCrowdSale {
         bytes data; // sending data
     }
 
-    mapping(address => ContributeAddress) public _saleValue;
-    mapping(bytes => ContributeAddress) _saleData;
+    mapping(address => ContributeAddress) public _contributeInfo;
+    mapping(bytes => ContributeAddress) _contruibuteData;
 
     /*
         Check is owner address
@@ -65,22 +65,12 @@ contract YggdrashCrowdSale {
 
     }
 
-    /**
-        NO MORE GAS WAR!!!
-    */
-    modifier checkGasPrice() {
-        if(maxGasPrice != 0){
-            assert(tx.gasprice < maxGasPrice + 1);
-        }
-        _;
-    }
-
     /*
-        Check exists sale list
+        Check exists Contribute list
     */
     modifier isExists() {
-        require(_saleData[msg.data].exists == false);
-        require(_saleValue[msg.sender].amount == 0);
+        require(_contruibuteData[msg.data].exists == false);
+        require(_contributeInfo[msg.sender].amount == 0);
         _;
     }
 
@@ -97,38 +87,38 @@ contract YggdrashCrowdSale {
      *  Enums Stage Status
      */
     enum Stages {
-    SaleDeployed,
-    SaleSetUp,
-    SaleStarted,
-    SaleEnded
+    Deployed,
+    SetUp,
+    Started,
+    Ended
     }
 
 
     /// init
     /// @param _token token address
     /// @param _tokenOwner token owner wallet address
-    /// @param _wallet sale ETH wallet
-    /// @param _saleAmount sale token total value
+    /// @param _wallet Send ETH wallet
+    /// @param _amount token total value
     /// @param _priceFactor token and ETH ratio
     /// @param _maxValue maximum ETH balance
     /// @param _minValue minimum ETH balance
 
-    function YggdrashCrowdSale(address _token, address _tokenOwner, address _wallet, uint _saleAmount, uint _priceFactor, uint _maxValue, uint _minValue)
+    function YggdrashCrowd(address _token, address _tokenOwner, address _wallet, uint _amount, uint _priceFactor, uint _maxValue, uint _minValue)
     public
     {
-        require (_tokenOwner != 0 && _wallet != 0 && _saleAmount != 0 && _priceFactor != 0);
+        require (_tokenOwner != 0 && _wallet != 0 && _amount != 0 && _priceFactor != 0);
         tokenOwner = _tokenOwner;
         owner = msg.sender;
         wallet = _wallet;
-        saleAmount = _saleAmount;
+        totalAmount = _amount;
         priceFactor = _priceFactor;
         maxValue = _maxValue;
         minValue = _minValue;
-        stage = Stages.SaleDeployed;
+        stage = Stages.Deployed;
 
         if(_token != 0){ // setup token
             yeedToken = ERC20(_token);
-            stage = Stages.SaleSetUp;
+            stage = Stages.SetUp;
         }
         // Max Gas Price is unlimited
         maxGasPrice = 0;
@@ -141,16 +131,16 @@ contract YggdrashCrowdSale {
     {
         require(_token != 0);
         yeedToken = ERC20(_token);
-        stage = Stages.SaleSetUp;
+        stage = Stages.SetUp;
     }
 
     /// @dev Start Sale
     function startSale()
     public
     isOwner
-    atStage(Stages.SaleSetUp)
+    atStage(Stages.SetUp)
     {
-        stage = Stages.SaleStarted;
+        stage = Stages.Started;
         startBlock = block.number;
     }
 
@@ -166,37 +156,40 @@ contract YggdrashCrowdSale {
     public
     isValidPayload
     isExists
-    checkGasPrice
-    atStage(Stages.SaleStarted)
+    atStage(Stages.Started)
     payable
     {
         uint amount = msg.value;
-        uint maxAmount = saleAmount.div(priceFactor);
+        uint maxAmount = totalAmount.div(priceFactor);
         // refund
         if (amount > maxAmount){
             uint refund = amount.sub(maxAmount);
             assert(msg.sender.send(refund));
             amount = maxAmount;
         }
+        //  NO MORE GAS WAR!!!
+        if(maxGasPrice != 0){
+            assert(tx.gasPrice < maxGasPrice + 1);
+        }
         totalReceived = totalReceived.add(amount);
         // calculate token
         uint token = amount.mul(priceFactor);
-        saleAmount = saleAmount.sub(token);
+        totalAmount = totalAmount.sub(token);
 
         // give token to sender
         yeedToken.transferFrom(tokenOwner, msg.sender, token);
         FundTransfer(msg.sender, token);
 
         // Set Contribute Account
-        ContributeAddress crowdData = _saleValue[msg.sender];
+        ContributeAddress crowdData = _contributeInfo[msg.sender];
         crowdData.exists = true;
         crowdData.account = msg.sender;
         crowdData.data = msg.data;
         crowdData.amount = amount;
         crowdData.balance = token;
-        // add SaleData
-        _saleData[msg.data] = crowdData;
-        _saleValue[msg.sender] = crowdData;
+        // add contruibuteData
+        _contruibuteData[msg.data] = crowdData;
+        _contributeInfo[msg.sender] = crowdData;
         // send to wallet
         wallet.transfer(amount);
 
@@ -205,17 +198,17 @@ contract YggdrashCrowdSale {
             finalizeSale();
     }
 
-    /// @dev Changes auction saleAmount and start price factor before auction is started.
-    /// @param _saleAmount Updated auction saleAmount.
+    /// @dev Changes auction totalAmount and start price factor before auction is started.
+    /// @param _totalAmount Updated auction totalAmount.
     /// @param _priceFactor Updated start price factor.
     /// @param _maxValue Maximum balance of ETH
     /// @param _minValue Minimum balance of ETH
-    function changeSettings(uint _saleAmount, uint _priceFactor, uint _maxValue, uint _minValue, uint _maxGasPrice)
+    function changeSettings(uint _totalAmount, uint _priceFactor, uint _maxValue, uint _minValue, uint _maxGasPrice)
     public
     isOwner
     {
-        require(_saleAmount != 0 && _priceFactor != 0);
-        saleAmount = _saleAmount;
+        require(_totalAmount != 0 && _priceFactor != 0);
+        totalAmount = _totalAmount;
         priceFactor = _priceFactor;
         maxValue = _maxValue;
         minValue = _minValue;
@@ -236,27 +229,27 @@ contract YggdrashCrowdSale {
     // @param src sender wallet address
     function balanceOf(address src) public constant returns (uint256)
     {
-        return _saleValue[src].balance;
+        return _contributeInfo[src].balance;
     }
 
     // amount ETH value
     // @param src sender wallet address
     function amountOf(address src) public constant returns(uint256)
     {
-        return _saleValue[src].amount;
+        return _contributeInfo[src].amount;
     }
 
     // sale data
     // @param src Yggdrash uuid
-    function saleData(bytes src) public constant returns(address)
+    function contruibuteData(bytes src) public constant returns(address)
     {
-        return _saleData[src].account;
+        return _contruibuteData[src].account;
     }
 
     // Check sale is open
     function isSaleOpen() public constant returns (bool)
     {
-        return stage == Stages.SaleStarted;
+        return stage == Stages.Started;
     }
 
     // CrowdSale halt
@@ -271,9 +264,9 @@ contract YggdrashCrowdSale {
     function finalizeSale()
     private
     {
-        stage = Stages.SaleEnded;
+        stage = Stages.Ended;
         // remain token send to owner
-        saleAmount = 0;
+        totalAmount = 0;
         endTime = now;
     }
 }
