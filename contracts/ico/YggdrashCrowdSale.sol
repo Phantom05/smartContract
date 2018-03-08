@@ -70,7 +70,7 @@ contract YggdrashCrowdSale {
     */
     modifier checkGasPrice() {
         if(maxGasPrice != 0){
-            require(tx.gasprice < maxGasPrice + 1);
+            assert(tx.gasprice < maxGasPrice + 1);
         }
         _;
     }
@@ -188,7 +188,7 @@ contract YggdrashCrowdSale {
         FundTransfer(msg.sender, token);
 
         // Set Contribute Account
-        ContributeAddress storage crowdData = _saleValue[msg.sender];
+        ContributeAddress crowdData = _saleValue[msg.sender];
         crowdData.exists = true;
         crowdData.account = msg.sender;
         crowdData.data = msg.data;

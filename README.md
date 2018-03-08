@@ -6,7 +6,7 @@
 - Version : Truffle v3.4.3
 
 ## Description
-YGGDRASH 클라우드세일 컨트렉트 주요기능
+### YGGDRASH 클라우드세일 컨트렉트 주요기능
 - YEED TOKEN 전송
 - 세일전 설정 변경
 - 단 1회 참여만 (Address 및 추가데이터 검증) 가능
@@ -14,7 +14,7 @@ YGGDRASH 클라우드세일 컨트렉트 주요기능
 - 어드레이스를 통하여 참여 데이터 확인
 - Max GasPrice 설정
  
-YGGDRASH YEED 
+### YGGDRASH YEED 
 - 일반적인 ERC20 기반 토큰
 - 잠금 가능 ( 전체 전송가능 설정 전, 후 )
 - 해제 가능 ( 전체 전송가능 설정 전, 후 )
