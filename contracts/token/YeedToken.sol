@@ -115,4 +115,9 @@ contract YeedToken is ERC20, Lockable {
         TokenTransfer();
     }
 
+    /* This unnamed function is called whenever someone tries to send ether to it */
+    function () public payable {
+        revert();
+    }
+
 }

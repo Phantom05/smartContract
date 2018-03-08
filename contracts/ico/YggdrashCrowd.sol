@@ -169,7 +169,7 @@ contract YggdrashCrowd {
         }
         //  NO MORE GAS WAR!!!
         if(maxGasPrice != 0){
-            assert(tx.gasPrice < maxGasPrice + 1);
+            assert(tx.gasprice < maxGasPrice + 1);
         }
         totalReceived = totalReceived.add(amount);
         // calculate token
