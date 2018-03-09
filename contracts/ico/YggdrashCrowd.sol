@@ -2,7 +2,7 @@ pragma solidity ^0.4.11;
 import "../token/Erc20.sol";
 import "../util/SafeMath.sol";
 /**
-    YGGDRASH CROWD SALE SmartContract
+    YGGDRASH SmartContract
     @author Peter Ryu - <odin@yggdrash.io>
 */
 contract YggdrashCrowd {
@@ -12,7 +12,7 @@ contract YggdrashCrowd {
     address public wallet;
     address public owner;
     address public tokenOwner;
-    uint public totalAmount;    // sale Token amount
+    uint public totalAmount;    // Contruibute Token amount
     uint public priceFactor; // ratio
     uint public startBlock;
     uint public totalReceived;
@@ -134,8 +134,8 @@ contract YggdrashCrowd {
         stage = Stages.SetUp;
     }
 
-    /// @dev Start Sale
-    function startSale()
+    /// @dev Start Contruibute
+    function startContruibute()
     public
     isOwner
     atStage(Stages.SetUp)
@@ -195,7 +195,7 @@ contract YggdrashCrowd {
 
         // token sold out
         if (amount == maxAmount)
-            finalizeSale();
+            finalizeContruibute();
     }
 
     /// @dev Changes auction totalAmount and start price factor before auction is started.
@@ -239,29 +239,29 @@ contract YggdrashCrowd {
         return _contributeInfo[src].amount;
     }
 
-    // sale data
+    // contruibute data
     // @param src Yggdrash uuid
     function contruibuteData(bytes src) public constant returns(address)
     {
         return _contruibuteData[src].account;
     }
 
-    // Check sale is open
-    function isSaleOpen() public constant returns (bool)
+    // Check contruibute is open
+    function isContruibuteOpen() public constant returns (bool)
     {
         return stage == Stages.Started;
     }
 
-    // CrowdSale halt
+    // Smartcontract halt
     function halt()
     public
     isOwner
     {
-        finalizeSale();
+        finalizeContruibute();
     }
 
-    // END of this sale
-    function finalizeSale()
+    // END of this Contruibute
+    function finalizeContruibute()
     private
     {
         stage = Stages.Ended;
