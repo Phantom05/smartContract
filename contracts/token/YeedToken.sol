@@ -19,15 +19,9 @@ contract YeedToken is ERC20, Lockable {
     mapping( address => uint ) _balances;
     mapping( address => mapping( address => uint ) ) _approvals;
     uint _supply;
-    address public walletAddress;
 
     event TokenBurned(address burnAddress, uint amountOfTokens);
     event TokenTransfer();
-
-    modifier onlyFromWallet {
-        require(msg.sender != walletAddress);
-        _;
-    }
 
     function YeedToken( uint initial_balance, address wallet)
     public
@@ -36,7 +30,6 @@ contract YeedToken is ERC20, Lockable {
         require(initial_balance != 0);
         _balances[msg.sender] = initial_balance;
         _supply = initial_balance;
-        walletAddress = wallet;
     }
 
     function totalSupply() public constant returns (uint supply) {
@@ -107,7 +100,7 @@ contract YeedToken is ERC20, Lockable {
 
     function enableTokenTransfer()
     external
-    onlyFromWallet
+    isOwner
     {
         tokenTransfer = true;
         TokenTransfer();
@@ -115,7 +108,7 @@ contract YeedToken is ERC20, Lockable {
 
     function disableTokenTransfer()
     external
-    onlyFromWallet
+    isOwner
     {
         tokenTransfer = false;
         TokenTransfer();
