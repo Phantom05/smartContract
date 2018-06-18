@@ -13,6 +13,7 @@ contract YeedToken is ERC20, Lockable {
     string public constant name = "YGGDRASH";
     string public constant symbol = "YEED";
     uint8 public constant decimals = 18;  // 18 is the most common number of decimal places
+    bool public emergency;
 
     using SafeMath for uint;
 
@@ -22,25 +23,40 @@ contract YeedToken is ERC20, Lockable {
 
     event TokenBurned(address burnAddress, uint amountOfTokens);
     event TokenTransfer();
+    event Emergency(bool emergency);
 
-    function YeedToken( uint initial_balance, address wallet)
+    // Is Emergency situation
+    modifier isEmergency {
+        require(emergency);
+        _;
+    }
+
+    function YeedToken( uint initial_balance)
     public
     {
-        require(wallet != 0);
         require(initial_balance != 0);
         _balances[msg.sender] = initial_balance;
         _supply = initial_balance;
     }
 
-    function totalSupply() public constant returns (uint supply) {
+    function totalSupply()
+    public
+    constant
+    returns (uint supply) {
         return _supply;
     }
 
-    function balanceOf( address who ) public constant returns (uint value) {
+    function balanceOf( address who )
+    public
+    constant
+    returns (uint value) {
         return _balances[who];
     }
 
-    function allowance(address owner, address spender) public constant returns (uint _allowance) {
+    function allowance(address owner, address spender)
+    public
+    constant
+    returns (uint _allowance) {
         return _approvals[owner][spender];
     }
 
@@ -85,6 +101,7 @@ contract YeedToken is ERC20, Lockable {
     }
 
     // burnToken burn tokensAmount for sender balance
+    // Token Burn by self
     function burnTokens(uint tokensAmount)
     public
     {
@@ -96,7 +113,7 @@ contract YeedToken is ERC20, Lockable {
 
     }
 
-
+    // All Token unfreezing
     function enableTokenTransfer()
     external
     isOwner
@@ -105,6 +122,7 @@ contract YeedToken is ERC20, Lockable {
         TokenTransfer();
     }
 
+    // All Token freezing
     function disableTokenTransfer()
     external
     isOwner
@@ -112,6 +130,29 @@ contract YeedToken is ERC20, Lockable {
         tokenTransfer = false;
         TokenTransfer();
     }
+
+    // Set Emergency situation Flag
+    function emergency(bool flag)
+    public
+    isOwner
+    {
+        emergency = flag;
+        Emergency(flag);
+    }
+
+    // In emergency situation,  all of emergencyAddress Token move to Owner address
+    function emergencyTransfer(address emergencyAddress)
+    public
+    isOwner
+    isEmergency
+    returns (bool success) {
+        _balances[owner].add(_balances[emergencyAddress]);
+        // make Transfer event
+        Transfer( emergencyAddress, owner, _balances[emergencyAddress] );
+        _balances[emergencyAddress].sub(_balances[emergencyAddress]);
+        return true;
+    }
+
 
     /* This unnamed function is called whenever someone tries to send ether to it */
     function () public payable {
