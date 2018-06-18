@@ -180,9 +180,9 @@
   "sourceMap": "",
   "deployedSourceMap": "",
   "source": "pragma solidity ^0.4.11;\n/**\n    ERC20 Interface\n    @author DongOk Peter Ryu - <odin@yggdrash.io>\n*/\ncontract ERC20 {\n    function totalSupply() public constant returns (uint supply);\n    function balanceOf( address who ) public constant returns (uint value);\n    function allowance( address owner, address spender ) public constant returns (uint _allowance);\n\n    function transfer( address to, uint value) public returns (bool ok);\n    function transferFrom( address from, address to, uint value) public returns (bool ok);\n    function approve( address spender, uint value ) public returns (bool ok);\n\n    event Transfer( address indexed from, address indexed to, uint value);\n    event Approval( address indexed owner, address indexed spender, uint value);\n}\n",
-  "sourcePath": "/Users/pop/Documents/Project/r2v/yggdrash/Yggdrash-token/contracts/token/Erc20.sol",
+  "sourcePath": "/Users/pop/Documents/Project/yggdrash/crowdsale/contracts/token/Erc20.sol",
   "ast": {
-    "absolutePath": "/Users/pop/Documents/Project/r2v/yggdrash/Yggdrash-token/contracts/token/Erc20.sol",
+    "absolutePath": "/Users/pop/Documents/Project/yggdrash/crowdsale/contracts/token/Erc20.sol",
     "exportedSymbols": {
       "ERC20": [
         716
@@ -1008,7 +1008,7 @@
     "src": "0:763:2"
   },
   "legacyAST": {
-    "absolutePath": "/Users/pop/Documents/Project/r2v/yggdrash/Yggdrash-token/contracts/token/Erc20.sol",
+    "absolutePath": "/Users/pop/Documents/Project/yggdrash/crowdsale/contracts/token/Erc20.sol",
     "exportedSymbols": {
       "ERC20": [
         716
@@ -1839,5 +1839,5 @@
   },
   "networks": {},
   "schemaVersion": "2.0.0",
-  "updatedAt": "2018-03-10T07:26:39.560Z"
+  "updatedAt": "2018-06-18T03:17:02.447Z"
 }
