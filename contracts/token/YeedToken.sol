@@ -87,7 +87,6 @@ contract YeedToken is ERC20, Lockable {
     // burnToken burn tokensAmount for sender balance
     function burnTokens(uint tokensAmount)
     public
-    isTokenTransfer
     {
         require( _balances[msg.sender] >= tokensAmount );
 
