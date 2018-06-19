@@ -77,7 +77,7 @@ contract  SwapToken{
     returns (bool success)
     {
         // check allowance newToken
-        require(newToken.allowance(tokenOwner, this) > amount);
+        require(newToken.allowance(tokenOwner, this) >= amount);
         // getBack Token
         require(oldToken.transferFrom(msg.sender, this, amount));
         // swap new Token
