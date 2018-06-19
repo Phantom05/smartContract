@@ -39,7 +39,7 @@ contract SafeTokenTransfer {
         require(yeedToken.balanceOf(receiver) < tokens);
         tokens = tokens.sub(yeedToken.balanceOf(receiver));
         // Send token
-        yeedToken.transferFrom(tokenOwner, receiver, tokens);
+        require(yeedToken.transferFrom(tokenOwner, receiver, tokens));
         TransferToken(receiver, tokens);
     }
 
