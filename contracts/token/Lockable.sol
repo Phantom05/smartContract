@@ -5,7 +5,6 @@ pragma solidity ^0.4.11;
 */
 contract Lockable {
     uint public creationTime;
-    bool public lock;
     bool public tokenTransfer;
     address public owner;
     mapping( address => bool ) public unlockaddress;
@@ -56,7 +55,7 @@ contract Lockable {
     {
         require(owner != target);
         lockaddress[target] = status;
-        emit Locked(target, status);
+        Locked(target, status);
     }
 
     // UnLock Address
@@ -65,6 +64,6 @@ contract Lockable {
     isOwner
     {
         unlockaddress[target] = status;
-        emit Unlocked(target, status);
+        Unlocked(target, status);
     }
 }

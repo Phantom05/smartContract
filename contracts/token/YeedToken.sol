@@ -13,7 +13,7 @@ contract YeedToken is ERC20, Lockable {
     string public constant name = "YGGDRASH";
     string public constant symbol = "YEED";
     uint8 public constant decimals = 18;  // 18 is the most common number of decimal places
-    bool public emergency;
+    bool public adminMode;
 
     using SafeMath for uint;
 
@@ -22,12 +22,12 @@ contract YeedToken is ERC20, Lockable {
     uint _supply;
 
     event TokenBurned(address burnAddress, uint amountOfTokens);
-    event TokenTransfer();
-    event Emergency(bool emergency);
+    event EnableTransfer(bool transfer);
+    event AdminMode(bool adminMode);
 
     // Is Emergency situation
-    modifier isEmergency {
-        require(emergency);
+    modifier isAdminMode {
+        require(adminMode);
         _;
     }
 
@@ -114,37 +114,29 @@ contract YeedToken is ERC20, Lockable {
     }
 
     // All Token unfreezing
-    function enableTokenTransfer()
+    function enableTokenTransfer(bool _tokenTransfer)
     external
+    isAdminMode
     isOwner
     {
-        tokenTransfer = true;
-        TokenTransfer();
-    }
-
-    // All Token freezing
-    function disableTokenTransfer()
-    external
-    isOwner
-    {
-        tokenTransfer = false;
-        TokenTransfer();
+        tokenTransfer = _tokenTransfer;
+        EnableTransfer(tokenTransfer);
     }
 
     // Set Emergency situation Flag
-    function emergency(bool flag)
+    function adminMode(bool _adminMode)
     public
     isOwner
     {
-        emergency = flag;
-        Emergency(flag);
+        adminMode = _adminMode;
+        AdminMode(adminMode);
     }
 
     // In emergency situation,  all of emergencyAddress Token move to Owner address
     function emergencyTransfer(address emergencyAddress)
     public
+    isAdminMode
     isOwner
-    isEmergency
     returns (bool success) {
         // Check Owner address
         require(emergencyAddress != owner);

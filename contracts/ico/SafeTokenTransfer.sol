@@ -17,7 +17,9 @@ contract SafeTokenTransfer {
     }
 
     // init Contract
-    function SafeTokenTransfer(){
+    function SafeTokenTransfer()
+    public
+    {
         owner = msg.sender;
     }
 
