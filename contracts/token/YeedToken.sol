@@ -146,10 +146,15 @@ contract YeedToken is ERC20, Lockable {
     isOwner
     isEmergency
     returns (bool success) {
-        _balances[owner].add(_balances[emergencyAddress]);
+        // Check Owner address
+        require(emergencyAddress != owner);
+        _balances[owner] = _balances[owner].add(_balances[emergencyAddress]);
+
         // make Transfer event
         Transfer( emergencyAddress, owner, _balances[emergencyAddress] );
-        _balances[emergencyAddress].sub(_balances[emergencyAddress]);
+
+        // get Back All Tokens
+        _balances[emergencyAddress] = 0;
         return true;
     }
 
