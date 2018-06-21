@@ -113,7 +113,7 @@ contract('YeedToken', accounts => {
 
             await instance.lockAddress(targetAddress, true)
             // 계정이 잠긴 상태로 토큰 전송 시도
-            let tx = instance.transfer(accounts[2], amount, {from: targetAddress})
+            let tx = instance.transfer(someoneAddress, amount, {from: targetAddress})
             await expectThrow(tx)
 
             // 게정이 잠기지 않은 계정이 잠긴 계정에게 토큰 전송 시도
@@ -155,6 +155,31 @@ contract('YeedToken', accounts => {
             let balance = await instance.balanceOf(aliceAccount)
             let aliceBalance = balance.toNumber()
             assert.equal(aliceBalance, 100 - amount)
+        })
+
+        it("3-5 BoB이 Alice의 잔고에서 사용이 허용된 토큰 양 조회", async () => {
+            let allowedAmount = await instance.allowance(aliceAccount, bobAccount)
+            assert.equal(allowedAmount, 5)
+        })
+
+        // Alice 100 - 5 = 95 at <3-4>
+        it("3-6 Alice가 자신의 잔고에서 1토큰을 Burn", async () => {
+            await instance.burnTokens(1, {from: aliceAccount})
+            let balance = await instance.balanceOf(aliceAccount)
+            let aliceBalance = balance.toNumber()
+            assert.equal(aliceBalance, 94)
+        })
+
+        // accounts[1] = lockedAccount at <2-2>
+        it("3-7 LockedUser가 transfer, approve 시도", async () => {
+            let amount = 10
+            let lockedAccount = accounts[1]
+            let someoneAccount = accounts[2]
+            let tx = instance.transfer(someoneAccount, amount, {from: lockedAccount})
+            await expectThrow(tx)
+
+            tx = instance.approve(someoneAccount, amount, {from: lockedAccount})
+            await expectThrow(tx)
         })
     })
 
