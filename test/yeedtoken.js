@@ -89,7 +89,7 @@ contract('YeedToken', accounts => {
     })
 
     describe("# 거래소 상장 전", () => {
-        it("모든 토큰 Transfer 불가능 하도록 함", async () => {
+        it("2-1 모든 토큰 Transfer 불가능 하도록 함", async () => {
             let isTokenTransfer = await instance.tokenTransfer()
             assert.isTrue(isTokenTransfer)
 
@@ -98,18 +98,64 @@ contract('YeedToken', accounts => {
             assert.isFalse(isTokenTransfer)
 
             // 토큰이 잠긴 상태로 토큰 전송 시도
-            let amount = 10;
+            let amount = 10
             let tx = instance.transfer(accounts[2], amount, {from: accounts[1]})
-            await expectThrow(tx);
+            await expectThrow(tx)
         })
 
-        it("특정 계좌 블랙 리스트 등록", async () => {
+        it("2-2 특정 계좌 블랙 리스트 등록", async () => {
+            let amount = 10
+            let targetAddress = accounts[1]
+            let someoneAddress = accounts[2]
 
+            await instance.enableTokenTransfer()
+            assert.isTrue(isTokenTransfer)
+
+            await instance.lockAddress(targetAddress, true)
+            // 계정이 잠긴 상태로 토큰 전송 시도
+            let tx = instance.transfer(accounts[2], amount, {from: targetAddress})
+            await expectThrow(tx)
+
+            // 게정이 잠기지 않은 계정이 잠긴 계정에게 토큰 전송 시도
+            await instance.transfer(targetAddress, amount, {from: someoneAddress})
+            
+            let balance = await instance.balanceOf.call(targetAddress)
+            let targetBalace = balance.toNumber()
+            assert.equal(targetBalace, 100 + amount)
+
+            balance = await instance.balanceOf.call(someoneAddress)
+            let someonebalance = balance.toNumber()
+            assert.equal(someonebalance, 100 - amount)
         })
     })
 
     describe("# 거래소 상장 후", () => {
-       
+        let aliceAccount = accounts[3]
+        let bobAccount   = accounts[4]
+        let cindyAccount = accounts[5]
+
+        it("3-3 Alice가 Bob에게 10 토큰만큼 사용할 수 있도록 해줌", async () => {
+            let amount = 10
+            let result = await instance.approve(bobAccount, amount, {from: aliceAccount})
+            if(DEBUG_MODE) {
+                console.log('Result', result)
+                console.log('Args', result.logs[0].args)
+            }
+        })
+
+        it("3-4 Bob은 Alice의 잔고에서 Cindy에게 5 토큰을 전송", async () => {
+            let amount = 5
+            let result = await instance.transferFrom(
+                aliceAccount, cindyAccount, amount, {from: bobAccount})
+            if(DEBUG_MODE) {
+                console.log('Result', result)
+                console.log('Args', result.logs[0].args)
+            }
+            
+            let balance = await instance.balanceOf(aliceAccount)
+            let aliceBalance = balance.toNumber()
+            assert.equal(aliceBalance, 100 - amount)
+        })
     })
 
     describe("# 새로운 Yeed 토큰으로 Swap", () => {
@@ -119,4 +165,7 @@ contract('YeedToken', accounts => {
     describe("# 거래소 해킹 당했을 경우 대처", () => {
         
     })
+})
+
+contract('YeedToken', accounts => {
 })

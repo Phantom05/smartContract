@@ -56,7 +56,7 @@ contract Lockable {
     {
         require(owner != target);
         lockaddress[target] = status;
-        Locked(target, status);
+        emit Locked(target, status);
     }
 
     // UnLock Address
@@ -65,6 +65,6 @@ contract Lockable {
     isOwner
     {
         unlockaddress[target] = status;
-        Unlocked(target, status);
+        emit Unlocked(target, status);
     }
 }
