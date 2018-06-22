@@ -1,4 +1,4 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.24;
 import "../token/Erc20.sol";
 import "../util/SafeMath.sol";
 
@@ -17,7 +17,7 @@ contract SafeTokenTransfer {
     }
 
     // init Contract
-    function SafeTokenTransfer()
+    constructor()
     public
     {
         owner = msg.sender;
@@ -42,7 +42,7 @@ contract SafeTokenTransfer {
         tokens = tokens.sub(yeedToken.balanceOf(receiver));
         // Send token
         require(yeedToken.transferFrom(tokenOwner, receiver, tokens));
-        TransferToken(receiver, tokens);
+        emit TransferToken(receiver, tokens);
     }
 
 }

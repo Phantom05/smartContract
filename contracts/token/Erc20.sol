@@ -1,4 +1,4 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.24;
 /**
     ERC20 Interface
     @author info@yggdrash.io

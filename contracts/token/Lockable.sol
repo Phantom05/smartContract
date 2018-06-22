@@ -1,4 +1,4 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.24;
 /**
     LOCKABLE TOKEN
     @author info@yggdrash.io
@@ -42,7 +42,7 @@ contract Lockable {
         _;
     }
 
-    function Lockable()
+    constructor()
     public
     {
         creationTime = now;
@@ -57,7 +57,7 @@ contract Lockable {
     {
         require(owner != target);
         lockaddress[target] = status;
-        Locked(target, status);
+        emit Locked(target, status);
     }
 
     // UnLock Address : add or remove whitelist
@@ -66,6 +66,6 @@ contract Lockable {
     isOwner
     {
         unlockaddress[target] = status;
-        Unlocked(target, status);
+        emit Unlocked(target, status);
     }
 }
