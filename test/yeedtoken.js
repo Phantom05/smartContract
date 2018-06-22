@@ -191,6 +191,3 @@ contract('YeedToken', accounts => {
         
     })
 })
-
-contract('YeedToken', accounts => {
-})
