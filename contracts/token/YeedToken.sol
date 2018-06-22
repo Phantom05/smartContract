@@ -25,8 +25,8 @@ contract YeedToken is ERC20, Lockable {
     uint _supply;
 
     event TokenBurned(address burnAddress, uint amountOfTokens);
-    event EnableTransfer(bool transfer);
-    event AdminMode(bool adminMode);
+    event SetTokenTransfer(bool transfer);
+    event SetAdminMode(bool adminMode);
     event EmergencyTransfer( address indexed from, address indexed to, uint value);
 
     modifier isAdminMode {
@@ -112,28 +112,29 @@ contract YeedToken is ERC20, Lockable {
         _balances[msg.sender] = _balances[msg.sender].sub(tokensAmount);
         _supply = _supply.sub(tokensAmount);
         TokenBurned(msg.sender, tokensAmount);
+        Transfer(msg.sender, address(0), tokensAmount);
 
     }
 
     // Set the tokenTransfer flag.
     // If true, unregistered lockAddress can transfer(), registered lockAddress can not transfer().
     // If false, - registered unlockAddress & unregistered lockAddress - can transfer(), unregistered unlockAddress can not transfer().
-    function enableTokenTransfer(bool _tokenTransfer)
+    function setTokenTransfer(bool _tokenTransfer)
     external
     isAdminMode
     isOwner
     {
         tokenTransfer = _tokenTransfer;
-        EnableTransfer(tokenTransfer);
+        SetTokenTransfer(tokenTransfer);
     }
 
     // Set Admin Mode Flag
-    function adminMode(bool _adminMode)
+    function setAdminMode(bool _adminMode)
     public
     isOwner
     {
         adminMode = _adminMode;
-        AdminMode(adminMode);
+        SetAdminMode(adminMode);
     }
 
     // In emergency situation, admin can use emergencyTransfer() for protecting user's token.
