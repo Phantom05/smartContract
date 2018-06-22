@@ -1,23 +1,25 @@
 pragma solidity ^0.4.11;
 /**
     LOCKABLE TOKEN
-    @author DongOk Peter Ryu - <odin@yggdrash.io>
+    @author info@yggdrash.io
 */
 contract Lockable {
     uint public creationTime;
     bool public tokenTransfer;
     address public owner;
+
+    // WhiteList : They can transfer Token in disable
     mapping( address => bool ) public unlockaddress;
-    // lockaddress List
+    // BlackList : They did not transfer Token in enable
     mapping( address => bool ) public lockaddress;
 
-    // LOCK EVENT
+    // LOCK EVENT : add or remove blacklist
     event Locked(address lockaddress,bool status);
-    // UNLOCK EVENT
+    // UNLOCK EVENT : add or remove whitelist
     event Unlocked(address unlockedaddress, bool status);
 
 
-    // if Token transfer
+    // whitelist wallet is able to token transfer in disable token transfer
     modifier isTokenTransfer {
         // if token transfer is not allow
         if(!tokenTransfer) {
@@ -30,7 +32,7 @@ contract Lockable {
     // or unlocked state, then acts and updates accordingly if
     // necessary
     modifier checkLock {
-        assert(!lockaddress[msg.sender]);
+        require(!lockaddress[msg.sender]);
         _;
     }
 
@@ -48,7 +50,7 @@ contract Lockable {
         owner = msg.sender;
     }
 
-    // Lock Address
+    // Lock Address : add or remove blacklist
     function lockAddress(address target, bool status)
     external
     isOwner
@@ -58,7 +60,7 @@ contract Lockable {
         Locked(target, status);
     }
 
-    // UnLock Address
+    // UnLock Address : add or remove whitelist
     function unlockAddress(address target, bool status)
     external
     isOwner

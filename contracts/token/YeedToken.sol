@@ -5,7 +5,7 @@ import '../util/SafeMath.sol';
 
 /**
     YGGDRASH Token
-    @author DongOk Peter Ryu - <odin@yggdrash.io>
+    @author info@yggdrash.io
 */
 contract YeedToken is ERC20, Lockable {
 
@@ -13,6 +13,8 @@ contract YeedToken is ERC20, Lockable {
     string public constant name = "YGGDRASH";
     string public constant symbol = "YEED";
     uint8 public constant decimals = 18;  // 18 is the most common number of decimal places
+
+    // Admin Mode flag, If true can make token transfer, emergencyTransfer
     bool public adminMode;
 
     using SafeMath for uint;
@@ -123,7 +125,7 @@ contract YeedToken is ERC20, Lockable {
         EnableTransfer(tokenTransfer);
     }
 
-    // Set Emergency situation Flag
+    // Set Admin Mode Flag
     function adminMode(bool _adminMode)
     public
     isOwner
