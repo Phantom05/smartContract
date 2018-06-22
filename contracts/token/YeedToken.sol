@@ -103,8 +103,10 @@ contract YeedToken is ERC20, Lockable {
         return true;
     }
 
-    // Burn tokens by myself
+    // Burn tokens by myself (owner)
     function burnTokens(uint tokensAmount)
+    isAdminMode
+    isOwner
     public
     {
         require( _balances[msg.sender] >= tokensAmount );
