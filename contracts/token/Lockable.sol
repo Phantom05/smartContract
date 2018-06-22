@@ -1,10 +1,8 @@
 pragma solidity ^0.4.11;
-/**
-    LOCKABLE TOKEN
-    @author info@yggdrash.io
-    @version 1.0.1
-    @date 06/22/2018
-*/
+/// @title Lockable contract
+/// @author info@yggdrash.io
+/// version 1.0.1
+/// date 06/22/2018
 contract Lockable {
     uint public creationTime;
     bool public tokenTransfer;

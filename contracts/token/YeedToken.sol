@@ -3,15 +3,12 @@ import "./Erc20.sol";
 import "./Lockable.sol";
 import '../util/SafeMath.sol';
 
- /**
-    YGGDRASH Token Contract.
-    This contract is the fixed about the unlocking bug.
-    This source code is audited by exteranl auditors.  
-    @author info@yggdrash.io
-    @version 1.0.1
-    @date 06/22/2018
-*/
-
+/// @title YGGDRASH Token Contract.
+/// @author info@yggdrash.io
+/// version 1.0.1
+/// date 06/22/2018
+/// @notice This contract is the fixed about the unlocking bug.
+/// This source code is audited by exteranl auditors.  
 contract YeedToken is ERC20, Lockable {
 
     string public constant name = "YGGDRASH";
