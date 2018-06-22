@@ -1,8 +1,7 @@
 pragma solidity ^0.4.11;
-/**
-    ERC20 Interface
-    @author DongOk Peter Ryu - <odin@yggdrash.io>
-*/
+
+/// @title ERC20 Interface
+/// @author info@yggdrash.io
 contract ERC20 {
     function totalSupply() public constant returns (uint supply);
     function balanceOf( address who ) public constant returns (uint value);
