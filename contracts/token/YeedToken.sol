@@ -3,18 +3,22 @@ import "./Erc20.sol";
 import "./Lockable.sol";
 import '../util/SafeMath.sol';
 
-/**
-    YGGDRASH Token
+ /**
+    YGGDRASH Token Contract.
+    This contract is the fixed about the unlocking bug.
+    This source code is audited by exteranl auditors.  
     @author info@yggdrash.io
+    @version 1.0.1
+    @date 06/22/2018
 */
+
 contract YeedToken is ERC20, Lockable {
 
-    // ADD INFORMATION
     string public constant name = "YGGDRASH";
     string public constant symbol = "YEED";
-    uint8 public constant decimals = 18;  // 18 is the most common number of decimal places
+    uint8 public constant decimals = 18;
 
-    // Admin Mode flag, If true can make token transfer, emergencyTransfer
+    // If this flag is true, admin can use enableTokenTranfer(), emergencyTransfer().
     bool public adminMode;
 
     using SafeMath for uint;
@@ -28,7 +32,6 @@ contract YeedToken is ERC20, Lockable {
     event AdminMode(bool adminMode);
     event EmergencyTransfer( address indexed from, address indexed to, uint value);
 
-    // Is Emergency situation
     modifier isAdminMode {
         require(adminMode);
         _;
@@ -103,8 +106,7 @@ contract YeedToken is ERC20, Lockable {
         return true;
     }
 
-    // burnToken burn tokensAmount for sender balance
-    // Token Burn by self
+    // Burn tokens by myself
     function burnTokens(uint tokensAmount)
     public
     {
@@ -116,7 +118,9 @@ contract YeedToken is ERC20, Lockable {
 
     }
 
-    // All Token unfreezing
+    // Set the tokenTransfer flag.
+    // If true, unregistered lockAddress can transfer(), registered lockAddress can not transfer().
+    // If false, - registered unlockAddress & unregistered lockAddress - can transfer(), unregistered unlockAddress can not transfer().
     function enableTokenTransfer(bool _tokenTransfer)
     external
     isAdminMode
@@ -135,7 +139,7 @@ contract YeedToken is ERC20, Lockable {
         AdminMode(adminMode);
     }
 
-    // In emergency situation,  all of emergencyAddress Token move to Owner address
+    // In emergency situation, admin can use emergencyTransfer() for protecting user's token.
     function emergencyTransfer(address emergencyAddress)
     public
     isAdminMode
@@ -155,7 +159,7 @@ contract YeedToken is ERC20, Lockable {
     }
 
 
-    /* This unnamed function is called whenever someone tries to send ether to it */
+    // This unnamed function is called whenever someone tries to send ether to it
     function () public payable {
         revert();
     }
