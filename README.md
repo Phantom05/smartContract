@@ -3,22 +3,27 @@
 - build Version : 0.4.11+commit.68ef5810.Darwin.appleclang
 
 ## Truffle 
-- Version : Truffle v3.4.3
+- Version : Truffle v4.1.0 (core: 4.1.0)
 
 ## Description
-### YGGDRASH 클라우드세일 컨트렉트 주요기능
-- YEED TOKEN 전송
-- 세일전 설정 변경
-- 단 1회 참여만 (Address 및 추가데이터 검증) 가능
-- 추가데이터를 통하여 참여 어드레이스 확인
-- 어드레이스를 통하여 참여 데이터 확인
-- Max GasPrice 설정
  
 ### YGGDRASH YEED 
 - 일반적인 ERC20 기반 토큰
-- 잠금 가능 ( 전체 전송가능 설정 전, 후 )
-- 해제 가능 ( 전체 전송가능 설정 전, 후 )
-- 토큰소각 가능 ( 전송 가능시 )
+- 토큰소각 가능
+- 어드민 기능
+  - 어드민 기능 잠금/해제
+  - 전체 전송 잠금/해제
+  - 전체 전송 자금시 화이트리스트 관리
+  - 전체 전송 해제시 블랙리스트 관리
+  - 위험상황에서 지갑토큰 회수 기능  
+
+### SafeTokenTransfer
+- dumpToken 전송시, 이중지급 방지기능
+- 토큰 approve 상태에서 실행가능
+
+### SwapToken
+- 이전토큰과 신규토큰을 1:1 비율로 지급 가능
+- 신규 토큰 approve 량만큼만 지급
 
 ## Dependencies
 We use Truffle in order to compile and test the contracts.

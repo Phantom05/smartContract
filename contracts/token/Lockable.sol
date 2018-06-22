@@ -4,7 +4,6 @@ pragma solidity ^0.4.11;
 /// version 1.0.1
 /// date 06/22/2018
 contract Lockable {
-    uint public creationTime;
     bool public tokenTransfer;
     address public owner;
 
@@ -43,7 +42,6 @@ contract Lockable {
     function Lockable()
     public
     {
-        creationTime = now;
         tokenTransfer = false;
         owner = msg.sender;
     }
