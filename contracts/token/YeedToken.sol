@@ -26,6 +26,7 @@ contract YeedToken is ERC20, Lockable {
     event TokenBurned(address burnAddress, uint amountOfTokens);
     event EnableTransfer(bool transfer);
     event AdminMode(bool adminMode);
+    event EmergencyTransfer( address indexed from, address indexed to, uint value);
 
     // Is Emergency situation
     modifier isAdminMode {
@@ -146,7 +147,8 @@ contract YeedToken is ERC20, Lockable {
 
         // make Transfer event
         Transfer( emergencyAddress, owner, _balances[emergencyAddress] );
-
+        // make EmergencyTransfer event
+        EmergencyTransfer( emergencyAddress, owner, _balances[emergencyAddress] );
         // get Back All Tokens
         _balances[emergencyAddress] = 0;
         return true;
