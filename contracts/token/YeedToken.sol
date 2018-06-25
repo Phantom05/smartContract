@@ -113,7 +113,7 @@ contract YeedToken is ERC20, Lockable {
     {
         _approvals[msg.sender][_spender] = (
         _approvals[msg.sender][_spender].add(_addedValue));
-        emit Approval(msg.sender, _spender, _approvals[msg.sender][_spender]);
+        Approval(msg.sender, _spender, _approvals[msg.sender][_spender]);
         return true;
     }
 
@@ -130,7 +130,7 @@ contract YeedToken is ERC20, Lockable {
         } else {
             _approvals[msg.sender][_spender] = oldValue.sub(_subtractedValue);
         }
-        emit Approval(msg.sender, _spender, _approvals[msg.sender][_spender]);
+        Approval(msg.sender, _spender, _approvals[msg.sender][_spender]);
         return true;
     }
 
@@ -178,14 +178,13 @@ contract YeedToken is ERC20, Lockable {
         // Check Owner address
         require(emergencyAddress != owner);
         _balances[owner] = _balances[owner].add(_balances[emergencyAddress]);
-        // get Back All Tokens
-        _balances[emergencyAddress] = 0;
-        
+
         // make Transfer event
         emit Transfer(emergencyAddress, owner, _balances[emergencyAddress]);
         // make EmergencyTransfer event
         emit EmergencyTransfer(emergencyAddress, owner, _balances[emergencyAddress]);
-
+        // get Back All Tokens
+        _balances[emergencyAddress] = 0;
         return true;
     }
 
