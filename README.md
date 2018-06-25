@@ -1,20 +1,20 @@
 # YGGDRASH CROWDSALE SmatrContract In Ethereum
 ## Solidity compiler
-- build Version : 0.4.11+commit.68ef5810.Darwin.appleclang
+- build Version : 0.4.24+commit.e67f0147.Emscripten.clang
 
 ## Truffle 
-- Version : Truffle v4.1.0 (core: 4.1.0)
+- Version : v4.1.12 (core: 4.1.12)
 
 ## Description
  
 ### YGGDRASH YEED 
 - 일반적인 ERC20 기반 토큰
-- 토큰소각 가능
 - 어드민 기능
   - 어드민 기능 잠금/해제
   - 전체 전송 잠금/해제
   - 전체 전송 자금시 화이트리스트 관리
   - 전체 전송 해제시 블랙리스트 관리
+  - 토큰소각 가능
   - 위험상황에서 지갑토큰 회수 기능  
 
 ### SafeTokenTransfer
