@@ -237,6 +237,3 @@ contract('YeedToken', accounts => {
         // 5-5 이후는 상위에서 테스트한 상황과 동일하게 동작하므로 생략
     })
 })
-
-contract('YeedToken', accounts => {
-})
