@@ -166,14 +166,6 @@ contract('YeedToken', accounts => {
             assert.equal(allowedAmount, 5)
         })
 
-        // Alice 100 - 5 = 95 at <3-4>
-        it("3-6 Alice가 자신의 잔고에서 1토큰을 Burn", async () => {
-            await instance.burnTokens(1, {from: aliceAccount})
-            let balance = await instance.balanceOf(aliceAccount)
-            let aliceBalance = balance.toNumber()
-            assert.equal(aliceBalance, 94)
-        })
-
         // accounts[1] = lockedAccount at <2-2>
         it("3-7 LockedUser가 transfer, approve 시도", async () => {
             let amount = 10
