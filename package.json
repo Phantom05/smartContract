@@ -17,6 +17,7 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/r2v/yggdrash-ico#readme",
   "dependencies": {
+    "solc": "^0.4.24",
     "truffle-hdwallet-provider": "0.0.5"
   }
 }
