@@ -34,7 +34,7 @@ contract  SwapToken{
     }
 
     // Setup Token Setup
-    function tokenSetup(address _oldToken, address _newToken, address _tokenOwner)
+    function setupToken(address _oldToken, address _newToken, address _tokenOwner)
     public
     isOwner
     {
