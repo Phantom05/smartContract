@@ -1,4 +1,4 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.24;
 import "../token/Erc20.sol";
 import "../util/SafeMath.sol";
 
@@ -26,7 +26,7 @@ contract  SwapToken{
     }
 
     // init Contract
-    function SwapToken()
+    constructor()
     public
     {
         owner = msg.sender;
@@ -50,7 +50,7 @@ contract  SwapToken{
     isOwner
     {
         swap_able = _swap_able;
-        SwapAble(_swap_able);
+        emit SwapAble(_swap_able);
     }
 
     // withdraw old token
@@ -82,7 +82,7 @@ contract  SwapToken{
         require(oldToken.transferFrom(msg.sender, this, amount));
         // swap new Token
         require(newToken.transferFrom(tokenOwner, msg.sender, amount));
-        Swap(msg.sender, amount);
+        emit Swap(msg.sender, amount);
         return true;
     }
 
