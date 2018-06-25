@@ -8,7 +8,7 @@ contract TestYeedToken {
     function testInitialBalanceWithNewYeedToken() public {
         YeedToken yeed = new YeedToken(10);
 
-        uint expected = 10;
+        uint256 expected = 10;
 
         Assert.equal(yeed.balanceOf(msg.sender), expected, "Owner should have 10 Yeed initially");
     }

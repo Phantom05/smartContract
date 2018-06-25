@@ -3,14 +3,14 @@ import "../token/Erc20.sol";
 import "../util/SafeMath.sol";
 
 contract  SwapToken{
-    using SafeMath for uint;
+    using SafeMath for uint256;
     ERC20 public oldToken;
     ERC20 public newToken;
     address public tokenOwner;
 
     address public owner;
     bool public swap_able;
-    event Swap(address sender, uint amount);
+    event Swap(address sender, uint256 amount);
     event SwapAble(bool swapable);
 
     modifier isOwner() {
@@ -54,7 +54,7 @@ contract  SwapToken{
     }
 
     // withdraw old token
-    function withdrawOldToken(address to, uint amount)
+    function withdrawOldToken(address to, uint256 amount)
     public
     isOwner
     returns (bool success)
@@ -71,7 +71,7 @@ contract  SwapToken{
         return newToken.allowance(tokenOwner, this);
     }
 
-    function swapToken(uint amount)
+    function swapToken(uint256 amount)
     public
     isSwap
     returns (bool success)

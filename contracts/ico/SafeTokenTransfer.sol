@@ -3,11 +3,11 @@ import "../token/Erc20.sol";
 import "../util/SafeMath.sol";
 
 contract SafeTokenTransfer {
-    using SafeMath for uint;
+    using SafeMath for uint256;
     ERC20 public yeedToken;
     address public tokenOwner;
     address public owner;
-    event TransferToken(address sender, uint amount);
+    event TransferToken(address sender, uint256 amount);
 
 
     modifier isOwner() {
@@ -33,7 +33,7 @@ contract SafeTokenTransfer {
         tokenOwner = _tokenOwner;
     }
 
-    function transferToken(address receiver, uint tokens)
+    function transferToken(address receiver, uint256 tokens)
     public
     isOwner
     {
