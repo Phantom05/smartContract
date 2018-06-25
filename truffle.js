@@ -9,18 +9,22 @@ const mnemonic = "twelve smooth dove arrest divert melt dog emotion very room na
 
 module.exports = {
 /* ganache */
-//   networks: {
-//     development: {
-//       host: "127.0.0.1",
-//       port: 7545,
-//       network_id: "*" // Match any network id
-//     },
+  networks: {
+    development: {
+      host: "127.0.0.1",
+      port: 7545,
+      network_id: "*" // Match any network id
+    },
 
-/* ropsten */
-networks: {
-    "ropsten-infura": {
+    ropsten: {
       provider: () => new HDWalletProvider(mnemonic, "https://ropsten.infura.io/3LsU6Au1r3rAa1b0Hawz"),
       network_id: 3,
+      gas: 5700000
+    },
+
+    live: {
+      provider: () => new HDWalletProvider(mnemonic, "https://ropsten.infura.io/3LsU6Au1r3rAa1b0Hawz"),
+      network_id: 1,
       gas: 5700000
     }
   }
