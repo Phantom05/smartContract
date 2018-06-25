@@ -37,8 +37,12 @@ contract('YeedToken', accounts => {
         it("1-3 전체 토큰 Transfer 가능하도록 함", async () => {
             let isTokenTransfer = await instance.tokenTransfer()
             assert.isFalse(isTokenTransfer)
-            
-            await instance.enableTokenTransfer()
+
+            await instance.setAdminMode(true)
+            let isAdminMode = await instance.adminMode();
+            assert.isTrue(isAdminMode)
+
+            await instance.setTokenTransfer(true)
             isTokenTransfer = await instance.tokenTransfer()
             assert.isTrue(isTokenTransfer)
         })
@@ -93,7 +97,7 @@ contract('YeedToken', accounts => {
             let isTokenTransfer = await instance.tokenTransfer()
             assert.isTrue(isTokenTransfer)
 
-            await instance.disableTokenTransfer()
+            await instance.setTokenTransfer(false)
             isTokenTransfer = await instance.tokenTransfer()
             assert.isFalse(isTokenTransfer)
 
@@ -108,7 +112,7 @@ contract('YeedToken', accounts => {
             let targetAddress = accounts[1]
             let someoneAddress = accounts[2]
 
-            await instance.enableTokenTransfer()
+            await instance.setTokenTransfer(true)
             assert.isTrue(isTokenTransfer)
 
             await instance.lockAddress(targetAddress, true)
@@ -119,7 +123,7 @@ contract('YeedToken', accounts => {
             // 게정이 잠기지 않은 계정이 잠긴 계정에게 토큰 전송 시도
             await instance.transfer(targetAddress, amount, {from: someoneAddress})
             
-            let balance = await instance.balanceOf.call(targetAddress)
+            let balance = await instance.balanceOf(targetAddress)
             let targetBalace = balance.toNumber()
             assert.equal(targetBalace, 100 + amount)
 
@@ -156,16 +160,80 @@ contract('YeedToken', accounts => {
             let aliceBalance = balance.toNumber()
             assert.equal(aliceBalance, 100 - amount)
         })
-    })
 
-    describe("# 새로운 Yeed 토큰으로 Swap", () => {
-        
+        it("3-5 BoB이 Alice의 잔고에서 사용이 허용된 토큰 양 조회", async () => {
+            let allowedAmount = await instance.allowance(aliceAccount, bobAccount)
+            assert.equal(allowedAmount, 5)
+        })
+
+        // Alice 100 - 5 = 95 at <3-4>
+        it("3-6 Alice가 자신의 잔고에서 1토큰을 Burn", async () => {
+            await instance.burnTokens(1, {from: aliceAccount})
+            let balance = await instance.balanceOf(aliceAccount)
+            let aliceBalance = balance.toNumber()
+            assert.equal(aliceBalance, 94)
+        })
+
+        // accounts[1] = lockedAccount at <2-2>
+        it("3-7 LockedUser가 transfer, approve 시도", async () => {
+            let amount = 10
+            let lockedAccount = accounts[1]
+            let someoneAccount = accounts[2]
+            let tx = instance.transfer(someoneAccount, amount, {from: lockedAccount})
+            await expectThrow(tx)
+
+            tx = instance.approve(someoneAccount, amount, {from: lockedAccount})
+            await expectThrow(tx)
+        })
     })
 
     describe("# 거래소 해킹 당했을 경우 대처", () => {
-        
-    })
-})
+        it("5-1 해커가 Denny 의 잔고에서 100 토큰을 빼감", async () => {
+            let amount = 100
+            let hackerAccount = accounts[6]
+            let dennyAccount = accounts[7]
 
-contract('YeedToken', accounts => {
+            let balance = await instance.balanceOf(hackerAccount)
+            let hackerStartingBalance = balance.toNumber();
+
+            balance = await instance.balanceOf(dennyAccount)
+            let dennyStartingBalance = balance.toNumber();
+
+            assert.equal(hackerStartingBalance, amount)
+            assert.equal(dennyStartingBalance, amount)
+
+            await instance.transfer(hackerAccount, amount, {from: dennyAccount})
+
+            balance = await instance.balanceOf(hackerAccount)
+            let hackerEndingBalance = balance.toNumber();
+
+            balance = await instance.balanceOf(dennyAccount)
+            let dennyEndingBalance = balance.toNumber();
+
+            assert.equal(hackerEndingBalance, hackerStartingBalance + amount)
+            assert.equal(dennyEndingBalance, dennyStartingBalance - amount)
+        })
+
+        it("5-4 hacker 의 계좌에 있는 모든 토큰을 몰수", async () => {
+            let ownerAccount = accounts[0]
+            let hackerAccount = accounts[6]
+
+            let balance = await instance.balanceOf(ownerAccount)
+            let ownerStartingBalance = balance.toNumber()
+            balance = await instance.balanceOf(hackerAccount)
+            let hackerStartingBalance = balance.toNumber()
+
+            await instance.emergencyTransfer(hackerAccount)
+
+            balance = await instance.balanceOf(ownerAccount)
+            let ownerEndingBalance = balance.toNumber()
+            balance = await instance.balanceOf(hackerAccount)
+            let hackerEndingBalance = balance.toNumber()
+
+            assert.equal(ownerEndingBalance, ownerStartingBalance + hackerStartingBalance)
+            assert.equal(hackerEndingBalance, 0)
+        })
+
+        // 5-5 이후는 상위에서 테스트한 상황과 동일하게 동작하므로 생략
+    })
 })

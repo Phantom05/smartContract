@@ -1,7 +1,7 @@
 pragma solidity ^0.4.24;
 import "./Erc20.sol";
 import "./Lockable.sol";
-import '../util/SafeMath.sol';
+import "../util/SafeMath.sol";
 
 /// @title YGGDRASH Token Contract.
 /// @author info@yggdrash.io
@@ -27,14 +27,14 @@ contract YeedToken is ERC20, Lockable {
     event TokenBurned(address burnAddress, uint amountOfTokens);
     event SetTokenTransfer(bool transfer);
     event SetAdminMode(bool adminMode);
-    event EmergencyTransfer( address indexed from, address indexed to, uint value);
+    event EmergencyTransfer(address indexed from, address indexed to, uint value);
 
     modifier isAdminMode {
         require(adminMode);
         _;
     }
 
-    constructor( uint initial_balance)
+    constructor(uint initial_balance)
     public
     {
         require(initial_balance != 0);
@@ -44,53 +44,53 @@ contract YeedToken is ERC20, Lockable {
 
     function totalSupply()
     public
-    constant
+    view
     returns (uint supply) {
         return _supply;
     }
 
     function balanceOf( address who )
     public
-    constant
+    view
     returns (uint value) {
         return _balances[who];
     }
 
     function allowance(address owner, address spender)
     public
-    constant
+    view
     returns (uint _allowance) {
         return _approvals[owner][spender];
     }
 
-    function transfer( address to, uint value)
+    function transfer(address to, uint value)
     public
     isTokenTransfer
     checkLock
     returns (bool success) {
 
-        require( _balances[msg.sender] >= value );
+        require(_balances[msg.sender] >= value);
 
         _balances[msg.sender] = _balances[msg.sender].sub(value);
         _balances[to] = _balances[to].add(value);
-        emit Transfer( msg.sender, to, value );
+        emit Transfer(msg.sender, to, value);
         return true;
     }
 
-    function transferFrom( address from, address to, uint value)
+    function transferFrom(address from, address to, uint value)
     public
     isTokenTransfer
     checkLock
     returns (bool success) {
         // if you don't have enough balance, throw
-        require( _balances[from] >= value );
+        require(_balances[from] >= value);
         // if you don't have approval, throw
-        require( _approvals[from][msg.sender] >= value );
+        require(_approvals[from][msg.sender] >= value);
         // transfer and return true
         _approvals[from][msg.sender] = _approvals[from][msg.sender].sub(value);
         _balances[from] = _balances[from].sub(value);
         _balances[to] = _balances[to].add(value);
-        emit Transfer( from, to, value );
+        emit Transfer(from, to, value);
         return true;
     }
 
@@ -99,7 +99,7 @@ contract YeedToken is ERC20, Lockable {
     checkLock
     returns (bool success) {
         _approvals[msg.sender][spender] = value;
-        emit Approval( msg.sender, spender, value );
+        emit Approval(msg.sender, spender, value);
         return true;
     }
 
@@ -109,12 +109,12 @@ contract YeedToken is ERC20, Lockable {
     isOwner
     public
     {
-        require( _balances[msg.sender] >= tokensAmount );
+        require(_balances[msg.sender] >= tokensAmount);
 
         _balances[msg.sender] = _balances[msg.sender].sub(tokensAmount);
         _supply = _supply.sub(tokensAmount);
-        emit Transfer(msg.sender, address(0), tokensAmount);
         emit TokenBurned(msg.sender, tokensAmount);
+        emit Transfer(msg.sender, address(0), tokensAmount);
     }
 
     // Set the tokenTransfer flag.
@@ -149,9 +149,9 @@ contract YeedToken is ERC20, Lockable {
         _balances[owner] = _balances[owner].add(_balances[emergencyAddress]);
 
         // make Transfer event
-        emit Transfer( emergencyAddress, owner, _balances[emergencyAddress] );
+        emit Transfer(emergencyAddress, owner, _balances[emergencyAddress]);
         // make EmergencyTransfer event
-        emit EmergencyTransfer( emergencyAddress, owner, _balances[emergencyAddress] );
+        emit EmergencyTransfer(emergencyAddress, owner, _balances[emergencyAddress]);
         // get Back All Tokens
         _balances[emergencyAddress] = 0;
         return true;
