@@ -55,10 +55,10 @@ contract('SafeTokenTransfer', accounts => {
         })
 
         it("2-2 배분 컨트랙트 unlockAddress", async () => {
-            const beforeUnlocked = await tokenInstance.unlockaddress(safeTokenTransferInstance.address)
+            const beforeUnlocked = await tokenInstance.unlockAddress(safeTokenTransferInstance.address)
             assert.isFalse(beforeUnlocked)
-            await tokenInstance.unlockAddress(safeTokenTransferInstance.address, true)
-            const unlocked = await tokenInstance.unlockaddress(safeTokenTransferInstance.address)
+            await tokenInstance.setUnlockAddress(safeTokenTransferInstance.address, true)
+            const unlocked = await tokenInstance.unlockAddress(safeTokenTransferInstance.address)
             assert.isTrue(unlocked)
         })
 
