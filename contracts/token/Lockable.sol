@@ -1,8 +1,10 @@
-pragma solidity ^0.4.11;
-/// @title Lockable contract
+pragma solidity ^0.4.24;
+
+/// LOCKABLE TOKEN
 /// @author info@yggdrash.io
 /// version 1.0.1
 /// date 06/22/2018
+
 contract Lockable {
     bool public tokenTransfer;
     address public owner;
@@ -39,7 +41,7 @@ contract Lockable {
         _;
     }
 
-    function Lockable()
+    constructor()
     public
     {
         tokenTransfer = false;
@@ -53,7 +55,7 @@ contract Lockable {
     {
         require(owner != target);
         lockaddress[target] = status;
-        Locked(target, status);
+        emit Locked(target, status);
     }
 
     // add or remove in unlockaddress(whitelist)
@@ -62,6 +64,6 @@ contract Lockable {
     isOwner
     {
         unlockaddress[target] = status;
-        Unlocked(target, status);
+        emit Unlocked(target, status);
     }
 }

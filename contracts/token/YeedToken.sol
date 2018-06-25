@@ -1,4 +1,4 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.24;
 import "./Erc20.sol";
 import "./Lockable.sol";
 import '../util/SafeMath.sol';
@@ -34,7 +34,7 @@ contract YeedToken is ERC20, Lockable {
         _;
     }
 
-    function YeedToken( uint initial_balance)
+    constructor( uint initial_balance)
     public
     {
         require(initial_balance != 0);
@@ -73,7 +73,7 @@ contract YeedToken is ERC20, Lockable {
 
         _balances[msg.sender] = _balances[msg.sender].sub(value);
         _balances[to] = _balances[to].add(value);
-        Transfer( msg.sender, to, value );
+        emit Transfer( msg.sender, to, value );
         return true;
     }
 
@@ -90,7 +90,7 @@ contract YeedToken is ERC20, Lockable {
         _approvals[from][msg.sender] = _approvals[from][msg.sender].sub(value);
         _balances[from] = _balances[from].sub(value);
         _balances[to] = _balances[to].add(value);
-        Transfer( from, to, value );
+        emit Transfer( from, to, value );
         return true;
     }
 
@@ -99,7 +99,7 @@ contract YeedToken is ERC20, Lockable {
     checkLock
     returns (bool success) {
         _approvals[msg.sender][spender] = value;
-        Approval( msg.sender, spender, value );
+        emit Approval( msg.sender, spender, value );
         return true;
     }
 
@@ -113,9 +113,8 @@ contract YeedToken is ERC20, Lockable {
 
         _balances[msg.sender] = _balances[msg.sender].sub(tokensAmount);
         _supply = _supply.sub(tokensAmount);
-        TokenBurned(msg.sender, tokensAmount);
         Transfer(msg.sender, address(0), tokensAmount);
-
+        emit TokenBurned(msg.sender, tokensAmount);
     }
 
     // Set the tokenTransfer flag.
@@ -127,7 +126,7 @@ contract YeedToken is ERC20, Lockable {
     isOwner
     {
         tokenTransfer = _tokenTransfer;
-        SetTokenTransfer(tokenTransfer);
+        emit SetTokenTransfer(tokenTransfer);
     }
 
     // Set Admin Mode Flag
@@ -136,7 +135,7 @@ contract YeedToken is ERC20, Lockable {
     isOwner
     {
         adminMode = _adminMode;
-        SetAdminMode(adminMode);
+        emit SetAdminMode(adminMode);
     }
 
     // In emergency situation, admin can use emergencyTransfer() for protecting user's token.
@@ -150,9 +149,9 @@ contract YeedToken is ERC20, Lockable {
         _balances[owner] = _balances[owner].add(_balances[emergencyAddress]);
 
         // make Transfer event
-        Transfer( emergencyAddress, owner, _balances[emergencyAddress] );
+        emit Transfer( emergencyAddress, owner, _balances[emergencyAddress] );
         // make EmergencyTransfer event
-        EmergencyTransfer( emergencyAddress, owner, _balances[emergencyAddress] );
+        emit EmergencyTransfer( emergencyAddress, owner, _balances[emergencyAddress] );
         // get Back All Tokens
         _balances[emergencyAddress] = 0;
         return true;
