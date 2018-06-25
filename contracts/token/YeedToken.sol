@@ -113,7 +113,7 @@ contract YeedToken is ERC20, Lockable {
 
         _balances[msg.sender] = _balances[msg.sender].sub(tokensAmount);
         _supply = _supply.sub(tokensAmount);
-        Transfer(msg.sender, address(0), tokensAmount);
+        emit Transfer(msg.sender, address(0), tokensAmount);
         emit TokenBurned(msg.sender, tokensAmount);
     }
 
