@@ -14,7 +14,7 @@ const { expectThrow } = require('./helper.js')
 
  const DEBUG_MODE = 0 // if(DEBUG_MODE) console.log()
 
-contract('YeedToken', accounts => {
+contract('YeedToken Scenario...', accounts => {
     const SUPPLY_AMOUNT = 10000000000 // 100억개
 
     let instance
@@ -115,9 +115,9 @@ contract('YeedToken', accounts => {
             await instance.setTokenTransfer(true)
             assert.isTrue(isTokenTransfer)
 
-            await instance.setUnlockAddress(targetAddress, true)
+            await instance.setLockAddress(targetAddress, true)
             // 계정이 잠긴 상태로 토큰 전송 시도
-            let tx = instance.transfer(accounts[2], amount, {from: targetAddress})
+            let tx = instance.transfer(someoneAddress, amount, {from: targetAddress})
             await expectThrow(tx)
 
             // 게정이 잠기지 않은 계정이 잠긴 계정에게 토큰 전송 시도
