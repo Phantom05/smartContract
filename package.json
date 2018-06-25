@@ -1,0 +1,22 @@
+{
+  "name": "yggdrash-ico",
+  "version": "1.0.0",
+  "description": "- build Version : 0.4.11+commit.68ef5810.Darwin.appleclang",
+  "main": "truffle.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/r2v/yggdrash-ico.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/r2v/yggdrash-ico#readme",
+  "dependencies": {
+    "truffle-hdwallet-provider": "0.0.5"
+  }
+}

@@ -1,7 +1,7 @@
 pragma solidity ^0.4.24;
 import "./Erc20.sol";
 import "./Lockable.sol";
-import '../util/SafeMath.sol';
+import "../util/SafeMath.sol";
 
 /// @title YGGDRASH Token Contract.
 /// @author info@yggdrash.io
@@ -62,7 +62,6 @@ contract YeedToken is ERC20, Lockable {
     isTokenTransfer
     checkLock
     returns (bool) {
-
         require(to != address(0));
         require(_balances[msg.sender] >= value);
 
@@ -85,9 +84,9 @@ contract YeedToken is ERC20, Lockable {
     checkLock
     returns (bool success) {
         // if you don't have enough balance, throw
-        require( _balances[from] >= value );
+        require(_balances[from] >= value);
         // if you don't have approval, throw
-        require( _approvals[from][msg.sender] >= value );
+        require(_approvals[from][msg.sender] >= value);
         // transfer and return true
         _balances[from] = _balances[from].sub(value);
         _balances[to] = _balances[to].add(value);
@@ -141,11 +140,12 @@ contract YeedToken is ERC20, Lockable {
     isAdminMode
     isOwner
     {
-        require( _balances[msg.sender] >= tokensAmount );
+        require(_balances[msg.sender] >= tokensAmount);
 
         _balances[msg.sender] = _balances[msg.sender].sub(tokensAmount);
         _supply = _supply.sub(tokensAmount);
         emit TokenBurned(msg.sender, tokensAmount);
+        emit Transfer(msg.sender, address(0), tokensAmount);
     }
 
     // Set the tokenTransfer flag.
@@ -180,9 +180,9 @@ contract YeedToken is ERC20, Lockable {
         _balances[owner] = _balances[owner].add(_balances[emergencyAddress]);
 
         // make Transfer event
-        emit Transfer( emergencyAddress, owner, _balances[emergencyAddress] );
+        emit Transfer(emergencyAddress, owner, _balances[emergencyAddress]);
         // make EmergencyTransfer event
-        emit EmergencyTransfer( emergencyAddress, owner, _balances[emergencyAddress] );
+        emit EmergencyTransfer(emergencyAddress, owner, _balances[emergencyAddress]);
         // get Back All Tokens
         _balances[emergencyAddress] = 0;
         return true;
