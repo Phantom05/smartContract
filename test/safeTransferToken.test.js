@@ -15,77 +15,80 @@ const { expectThrow } = require('./helper.js')
 
 const DEBUG_MODE = 0 // if(DEBUG_MODE) console.log()
 const SUPPLY_AMOUNT = 10000000000 // 100억개
+const APPROVE_AMOUNT = 4000000000 //  40억개
+const TRANSFER_BASE_AMOUNT = 100
+const MAX_TRANSFER_COUNT = 3
 
 contract('SafeTokenTransfer', accounts => {
-    let owner = accounts[0]
+    let tokenInstance
+    let safeTokenTransferInstance
+
+    const owner = accounts[0]
 
     before(async () => {
-        this.token = await NewYeedToken.new(SUPPLY_AMOUNT)
-        this.safeTokenTransfer = await SafeTokenTransfer.new()
+        tokenInstance = await NewYeedToken.new(SUPPLY_AMOUNT)
+        safeTokenTransferInstance = await SafeTokenTransfer.new()
     })
 
     describe("1. 신규토큰 컨트렉트 배포", () => {
+
         it("1-1 Owner 토큰 발행량 조회", async () => {
-            let balance = await this.token.balanceOf.call(owner)
+            const balance = await tokenInstance.balanceOf.call(owner)
             assert.equal(balance.valueOf(), SUPPLY_AMOUNT)
         })
 
         it("1-2 전체 토큰 발행량 조회", async () => {
-            let amount = await this.token.totalSupply()
+            const amount = await tokenInstance.totalSupply()
             assert.equal(amount.valueOf(), SUPPLY_AMOUNT)
         })
     })
 
     describe("2. 배분 컨트렉트 배포", () => {
-        const approveAmount = 4000000000
-        let spenderAddr
 
         it("2-1 40억개 approve", async () => {
-            spenderAddr = this.safeTokenTransfer.address
-            let beforeAllowance = await this.token.allowance(owner, spenderAddr)
+            spenderAddr = safeTokenTransferInstance.address
+            const beforeAllowance = await tokenInstance.allowance(owner, safeTokenTransferInstance.address)
             assert.equal(beforeAllowance.valueOf(), 0, "allowance should be zero")
-            await this.token.approve(spenderAddr, approveAmount)
-            let allowance = await this.token.allowance(owner, spenderAddr)
-            assert.equal(allowance.valueOf(), approveAmount)
+            await tokenInstance.approve(safeTokenTransferInstance.address, APPROVE_AMOUNT)
+            const allowance = await tokenInstance.allowance(owner, safeTokenTransferInstance.address)
+            assert.equal(allowance.valueOf(), APPROVE_AMOUNT)
         })
 
         it("2-2 배분 컨트랙트 unlockAddress", async () => {
-            let beforeUnlocked = await this.token.unlockaddress(spenderAddr)
+            const beforeUnlocked = await tokenInstance.unlockaddress(safeTokenTransferInstance.address)
             assert.isFalse(beforeUnlocked)
-            await this.token.unlockAddress(spenderAddr, true)
-            let unlocked = await this.token.unlockaddress(spenderAddr)
+            await tokenInstance.unlockAddress(safeTokenTransferInstance.address, true)
+            const unlocked = await tokenInstance.unlockaddress(safeTokenTransferInstance.address)
             assert.isTrue(unlocked)
         })
 
         it("2-3 토큰 설정", async () => {
-            let tokenAddr = this.token.address
-            let tokenOwner = await this.token.owner()
-            await this.safeTokenTransfer.setupToken(tokenAddr, tokenOwner)
-            let yeedTokenAddr = await this.safeTokenTransfer.yeedToken()
+            const tokenAddr = tokenInstance.address
+            const tokenOwner = await tokenInstance.owner()
+            await safeTokenTransferInstance.setupToken(tokenAddr, tokenOwner)
+            const yeedTokenAddr = await safeTokenTransferInstance.yeedToken()
             assert.equal(tokenAddr, yeedTokenAddr)
-            let yeedTokenOwner = await this.safeTokenTransfer.tokenOwner()
+            const yeedTokenOwner = await safeTokenTransferInstance.tokenOwner()
             assert.equal(tokenOwner, yeedTokenOwner)
         })
 
-        const transferCount = 3
-        const transferAmount = 100
         it("2-4 토큰 배분", async () => {
             const startAccountIdx = 2
-            for (i = startAccountIdx; i < transferCount + startAccountIdx; i++) {
+            for (i = startAccountIdx; i < startAccountIdx + MAX_TRANSFER_COUNT; i++) {
                 // duplicated transfer to check safety
-                await this.safeTokenTransfer.transferToken(accounts[i], transferAmount/2)
-                await this.safeTokenTransfer.transferToken(accounts[i], transferAmount)
+                await safeTokenTransferInstance.transferToken(accounts[i], TRANSFER_BASE_AMOUNT/2)
+                await safeTokenTransferInstance.transferToken(accounts[i], TRANSFER_BASE_AMOUNT)
 
-                let balance = await this.token.balanceOf.call(accounts[i])
-                assert.equal(balance.valueOf(), transferAmount)
+                const balance = await tokenInstance.balanceOf.call(accounts[i])
+                assert.equal(balance.valueOf(), TRANSFER_BASE_AMOUNT)
             }
         })
 
         it("2-5 토큰 배분결과 확인", async () => {
-            let ownerBalance = await this.token.balanceOf.call(owner)
-            assert.equal(ownerBalance.valueOf(), SUPPLY_AMOUNT - (transferCount * transferAmount))
-            let allowanceBalance = await this.token.allowance(owner, spenderAddr)
-            assert.equal(allowanceBalance.valueOf(), approveAmount - (transferCount * transferAmount))
+            const ownerBalance = await tokenInstance.balanceOf.call(owner)
+            assert.equal(ownerBalance.valueOf(), SUPPLY_AMOUNT - (TRANSFER_BASE_AMOUNT * MAX_TRANSFER_COUNT))
+            const allowanceBalance = await tokenInstance.allowance(owner, safeTokenTransferInstance.address)
+            assert.equal(allowanceBalance.valueOf(), APPROVE_AMOUNT - (TRANSFER_BASE_AMOUNT * MAX_TRANSFER_COUNT))
             if (DEBUG_MODE) console.log('\tFINAL ---> ', 'ownerBalance =', ownerBalance.valueOf(), '|', 'allowanceBalance =', allowanceBalance.valueOf())
         })
     })
