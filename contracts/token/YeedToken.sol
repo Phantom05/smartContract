@@ -18,57 +18,51 @@ contract YeedToken is ERC20, Lockable {
     // If this flag is true, admin can use enableTokenTranfer(), emergencyTransfer().
     bool public adminMode;
 
-    using SafeMath for uint;
+    using SafeMath for uint256;
 
-    mapping( address => uint ) _balances;
-    mapping( address => mapping( address => uint ) ) _approvals;
-    uint _supply;
+    mapping(address => uint256 ) _balances;
+    mapping(address => mapping(address => uint256)) internal _approvals;
+    uint256 _supply;
 
-    event TokenBurned(address burnAddress, uint amountOfTokens);
+    event TokenBurned(address burnAddress, uint256 amountOfTokens);
     event SetTokenTransfer(bool transfer);
     event SetAdminMode(bool adminMode);
-    event EmergencyTransfer(address indexed from, address indexed to, uint value);
+    event EmergencyTransfer(address indexed from, address indexed to, uint256 value);
 
     modifier isAdminMode {
         require(adminMode);
         _;
     }
 
-    constructor(uint initial_balance)
+    constructor(uint256 initial_balance)
     public
     {
         require(initial_balance != 0);
-        _balances[msg.sender] = initial_balance;
         _supply = initial_balance;
+        _balances[msg.sender] = initial_balance;
+        emit Transfer(address(0), msg.sender, initial_balance);
     }
 
     function totalSupply()
     public
     view
-    returns (uint supply) {
+    returns (uint256) {
         return _supply;
     }
 
-    function balanceOf( address who )
+    function balanceOf(address who)
     public
     view
-    returns (uint value) {
+    returns (uint256) {
         return _balances[who];
     }
 
-    function allowance(address owner, address spender)
-    public
-    view
-    returns (uint _allowance) {
-        return _approvals[owner][spender];
-    }
-
-    function transfer(address to, uint value)
+    function transfer(address to, uint256 value)
     public
     isTokenTransfer
     checkLock
-    returns (bool success) {
-
+    returns (bool) {
+        require(to != address(0));
         require(_balances[msg.sender] >= value);
 
         _balances[msg.sender] = _balances[msg.sender].sub(value);
@@ -77,7 +71,14 @@ contract YeedToken is ERC20, Lockable {
         return true;
     }
 
-    function transferFrom(address from, address to, uint value)
+    function allowance(address owner, address spender)
+    public
+    view
+    returns (uint256) {
+        return _approvals[owner][spender];
+    }
+
+    function transferFrom(address from, address to, uint256 value)
     public
     isTokenTransfer
     checkLock
@@ -87,27 +88,57 @@ contract YeedToken is ERC20, Lockable {
         // if you don't have approval, throw
         require(_approvals[from][msg.sender] >= value);
         // transfer and return true
-        _approvals[from][msg.sender] = _approvals[from][msg.sender].sub(value);
         _balances[from] = _balances[from].sub(value);
         _balances[to] = _balances[to].add(value);
-        emit Transfer(from, to, value);
+        _approvals[from][msg.sender] = _approvals[from][msg.sender].sub(value);
+        emit Transfer( from, to, value );
         return true;
     }
 
-    function approve(address spender, uint value)
+    function approve(address spender, uint256 value)
     public
     checkLock
-    returns (bool success) {
+    returns (bool) {
         _approvals[msg.sender][spender] = value;
         emit Approval(msg.sender, spender, value);
         return true;
     }
 
+    function increaseApproval(
+        address _spender,
+        uint256 _addedValue
+    )
+        public
+        returns (bool)
+    {
+        _approvals[msg.sender][_spender] = (
+        _approvals[msg.sender][_spender].add(_addedValue));
+        emit Approval(msg.sender, _spender, _approvals[msg.sender][_spender]);
+        return true;
+    }
+
+    function decreaseApproval(
+        address _spender,
+        uint256 _subtractedValue
+    )
+        public
+        returns (bool)
+    {
+        uint256 oldValue = _approvals[msg.sender][_spender];
+        if (_subtractedValue > oldValue) {
+            _approvals[msg.sender][_spender] = 0;
+        } else {
+            _approvals[msg.sender][_spender] = oldValue.sub(_subtractedValue);
+        }
+        emit Approval(msg.sender, _spender, _approvals[msg.sender][_spender]);
+        return true;
+    }
+
     // Burn tokens by myself (owner)
-    function burnTokens(uint tokensAmount)
+    function burnTokens(uint256 tokensAmount)
+    public
     isAdminMode
     isOwner
-    public
     {
         require(_balances[msg.sender] >= tokensAmount);
 

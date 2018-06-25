@@ -46,7 +46,7 @@ contract('SwapToken', accounts => {
         })
 
         it("1-2 테스트 계정 토큰 배분", async () => {
-            await oldTokenInstance.unlockAddress(owner, true)
+            await oldTokenInstance.setUnlockAddress(owner, true)
             await oldTokenInstance.transfer(aliceAccount, SWAP_BASE_AMOUNT/2) // 50
             await oldTokenInstance.transfer(bobAccount, SWAP_BASE_AMOUNT)     // 100
             await oldTokenInstance.transfer(cindyAccount, SWAP_BASE_AMOUNT*2) // 200
@@ -82,11 +82,11 @@ contract('SwapToken', accounts => {
         })
 
         it("3-2 스왑 컨트랙트 unlockAddress", async () => {
-            await oldTokenInstance.unlockAddress(swapTokenInstance.address, true)
-            await tokenInstance.unlockAddress(swapTokenInstance.address, true)
-            const oldTokenUnlocked = await oldTokenInstance.unlockaddress(swapTokenInstance.address)
+            await oldTokenInstance.setUnlockAddress(swapTokenInstance.address, true)
+            await tokenInstance.setUnlockAddress(swapTokenInstance.address, true)
+            const oldTokenUnlocked = await oldTokenInstance.unlockAddress(swapTokenInstance.address)
             assert.isTrue(oldTokenUnlocked)
-            const tokenUnlocked = await tokenInstance.unlockaddress(swapTokenInstance.address)
+            const tokenUnlocked = await tokenInstance.unlockAddress(swapTokenInstance.address)
             assert.isTrue(tokenUnlocked)
         })
     })
