@@ -115,7 +115,7 @@ contract('YeedToken', accounts => {
             await instance.setTokenTransfer(true)
             assert.isTrue(isTokenTransfer)
 
-            await instance.lockAddress(targetAddress, true)
+            await instance.setUnlockAddress(targetAddress, true)
             // 계정이 잠긴 상태로 토큰 전송 시도
             let tx = instance.transfer(accounts[2], amount, {from: targetAddress})
             await expectThrow(tx)

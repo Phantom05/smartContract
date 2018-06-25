@@ -21,7 +21,7 @@ contract YeedToken is ERC20, Lockable {
     using SafeMath for uint256;
 
     mapping(address => uint256 ) _balances;
-    mapping(address => mapping( address => uint256)) internal _approvals;
+    mapping(address => mapping(address => uint256)) internal _approvals;
     uint256 _supply;
 
     event TokenBurned(address burnAddress, uint256 amountOfTokens);
@@ -78,7 +78,7 @@ contract YeedToken is ERC20, Lockable {
         return _approvals[owner][spender];
     }
 
-    function transferFrom( address from, address to, uint256 value)
+    function transferFrom(address from, address to, uint256 value)
     public
     isTokenTransfer
     checkLock
@@ -113,7 +113,7 @@ contract YeedToken is ERC20, Lockable {
     {
         _approvals[msg.sender][_spender] = (
         _approvals[msg.sender][_spender].add(_addedValue));
-        Approval(msg.sender, _spender, _approvals[msg.sender][_spender]);
+        emit Approval(msg.sender, _spender, _approvals[msg.sender][_spender]);
         return true;
     }
 
@@ -130,7 +130,7 @@ contract YeedToken is ERC20, Lockable {
         } else {
             _approvals[msg.sender][_spender] = oldValue.sub(_subtractedValue);
         }
-        Approval(msg.sender, _spender, _approvals[msg.sender][_spender]);
+        emit Approval(msg.sender, _spender, _approvals[msg.sender][_spender]);
         return true;
     }
 

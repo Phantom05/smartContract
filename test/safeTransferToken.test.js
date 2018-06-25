@@ -49,11 +49,11 @@ contract('SafeTokenTransfer', accounts => {
             assert.equal(allowance.valueOf(), approveAmount)
         })
 
-        it("2-2 배분 컨트랙트 unlockAddress", async () => {
-            let beforeUnlocked = await this.token.unlockaddress(spenderAddr)
+        it("2-2 배분 컨트랙트 setUnlockAddress", async () => {
+            let beforeUnlocked = await this.token.setUnlockAddress(spenderAddr)
             assert.isFalse(beforeUnlocked)
-            await this.token.unlockAddress(spenderAddr, true)
-            let unlocked = await this.token.unlockaddress(spenderAddr)
+            await this.token.setUnlockAddress(spenderAddr, true)
+            let unlocked = await this.token.setUnlockAddress(spenderAddr)
             assert.isTrue(unlocked)
         })
 
