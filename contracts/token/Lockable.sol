@@ -9,29 +9,29 @@ contract Lockable {
     bool public tokenTransfer;
     address public owner;
 
-    // unlockaddress(whitelist) : They can transfer even if tokenTranser flag is false.
-    mapping( address => bool ) public unlockaddress;
-    // lockaddress(blacklist) : They cannot transfer even if tokenTransfer flag is true.
-    mapping( address => bool ) public lockaddress;
+    // unlockAddress(whitelist) : They can transfer even if tokenTranser flag is false.
+    mapping(address => bool) public unlockAddress;
+    // lockAddress(blacklist) : They cannot transfer even if tokenTransfer flag is true.
+    mapping(address => bool) public lockAddress;
 
     // LOCK EVENT : add or remove blacklist
-    event Locked(address lockaddress,bool status);
+    event Locked(address lockAddress, bool status);
     // UNLOCK EVENT : add or remove whitelist
-    event Unlocked(address unlockedaddress, bool status);
+    event Unlocked(address unlockedAddress, bool status);
 
 
     // check whether can tranfer tokens or not.
     modifier isTokenTransfer {
         // if token transfer is not allow
         if(!tokenTransfer) {
-            require(unlockaddress[msg.sender]);
+            require(unlockAddress[msg.sender]);
         }
         _;
     }
 
-    // check whether registered in lockaddress or not
+    // check whether registered in lockAddress or not
     modifier checkLock {
-        require(!lockaddress[msg.sender]);
+        require(!lockAddress[msg.sender]);
         _;
     }
 
@@ -48,22 +48,22 @@ contract Lockable {
         owner = msg.sender;
     }
 
-    // add or remove in lockaddress(blacklist)
-    function lockAddress(address target, bool status)
+    // add or remove in lockAddress(blacklist)
+    function setLockAddress(address target, bool status)
     external
     isOwner
     {
         require(owner != target);
-        lockaddress[target] = status;
+        lockAddress[target] = status;
         emit Locked(target, status);
     }
 
-    // add or remove in unlockaddress(whitelist)
-    function unlockAddress(address target, bool status)
+    // add or remove in unlockAddress(whitelist)
+    function setUnlockAddress(address target, bool status)
     external
     isOwner
     {
-        unlockaddress[target] = status;
+        unlockAddress[target] = status;
         emit Unlocked(target, status);
     }
 }
