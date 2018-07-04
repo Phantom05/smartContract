@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity 0.4.24;
 import "./Erc20.sol";
 import "./Lockable.sol";
 import "../util/SafeMath.sol";
@@ -20,9 +20,9 @@ contract YeedToken is ERC20, Lockable {
 
     using SafeMath for uint256;
 
-    mapping(address => uint256 ) _balances;
+    mapping(address => uint256) internal _balances;
     mapping(address => mapping(address => uint256)) internal _approvals;
-    uint256 _supply;
+    uint256 internal _supply;
 
     event TokenBurned(address burnAddress, uint256 amountOfTokens);
     event SetTokenTransfer(bool transfer);
@@ -91,7 +91,7 @@ contract YeedToken is ERC20, Lockable {
         _balances[from] = _balances[from].sub(value);
         _balances[to] = _balances[to].add(value);
         _approvals[from][msg.sender] = _approvals[from][msg.sender].sub(value);
-        emit Transfer( from, to, value );
+        emit Transfer(from, to, value);
         return true;
     }
 
@@ -104,26 +104,20 @@ contract YeedToken is ERC20, Lockable {
         return true;
     }
 
-    function increaseApproval(
-        address _spender,
-        uint256 _addedValue
-    )
-        public
-        returns (bool)
-    {
+    function increaseApproval(address _spender, uint256 _addedValue)
+    public
+    checkLock
+    returns (bool) {
         _approvals[msg.sender][_spender] = (
         _approvals[msg.sender][_spender].add(_addedValue));
         emit Approval(msg.sender, _spender, _approvals[msg.sender][_spender]);
         return true;
     }
 
-    function decreaseApproval(
-        address _spender,
-        uint256 _subtractedValue
-    )
-        public
-        returns (bool)
-    {
+    function decreaseApproval(address _spender, uint256 _subtractedValue)
+    public
+    checkLock
+    returns (bool) {
         uint256 oldValue = _approvals[msg.sender][_spender];
         if (_subtractedValue > oldValue) {
             _approvals[msg.sender][_spender] = 0;
@@ -187,11 +181,4 @@ contract YeedToken is ERC20, Lockable {
         _balances[emergencyAddress] = 0;
         return true;
     }
-
-
-    // This unnamed function is called whenever someone tries to send ether to it
-    function () public payable {
-        revert();
-    }
-
 }

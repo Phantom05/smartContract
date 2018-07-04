@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity 0.4.24;
 import "../token/Erc20.sol";
 import "../util/SafeMath.sol";
 
@@ -65,7 +65,7 @@ contract  SwapToken{
 
     function swapAbleToken()
     public
-    constant
+    view
     returns (uint256)
     {
         return newToken.allowance(tokenOwner, this);
@@ -84,10 +84,5 @@ contract  SwapToken{
         require(newToken.transferFrom(tokenOwner, msg.sender, amount));
         emit Swap(msg.sender, amount);
         return true;
-    }
-
-    /* This unnamed function is called whenever someone tries to send ether to it */
-    function () public payable {
-        revert();
     }
 }
