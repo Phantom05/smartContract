@@ -104,26 +104,20 @@ contract YeedToken is ERC20, Lockable {
         return true;
     }
 
-    function increaseApproval(
-        address _spender,
-        uint256 _addedValue
-    )
-        public
-        returns (bool)
-    {
+    function increaseApproval(address _spender, uint256 _addedValue)
+    public
+    checkLock
+    returns (bool) {
         _approvals[msg.sender][_spender] = (
         _approvals[msg.sender][_spender].add(_addedValue));
         emit Approval(msg.sender, _spender, _approvals[msg.sender][_spender]);
         return true;
     }
 
-    function decreaseApproval(
-        address _spender,
-        uint256 _subtractedValue
-    )
-        public
-        returns (bool)
-    {
+    function decreaseApproval(address _spender, uint256 _subtractedValue)
+    public
+    checkLock
+    returns (bool) {
         uint256 oldValue = _approvals[msg.sender][_spender];
         if (_subtractedValue > oldValue) {
             _approvals[msg.sender][_spender] = 0;
