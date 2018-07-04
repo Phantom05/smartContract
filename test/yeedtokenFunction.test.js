@@ -360,7 +360,7 @@ describe('# YeedToken Function...', () => {
     })
 
     // approve() test 는 yeedtokenScenario.test.js - 3-3 ~ 3-7 참조
-    contract.only('increase/decrease approve(address spender, uint256 value)', accounts => {
+    contract('increase/decrease approve(address spender, uint256 value)', accounts => {
         let ownerAccount = accounts[0]
         let aliceAccount = accounts[1]
         let bobAccount = accounts[2]
