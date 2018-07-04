@@ -20,9 +20,9 @@ contract YeedToken is ERC20, Lockable {
 
     using SafeMath for uint256;
 
-    mapping(address => uint256 ) _balances;
+    mapping(address => uint256) internal _balances;
     mapping(address => mapping(address => uint256)) internal _approvals;
-    uint256 _supply;
+    uint256 internal _supply;
 
     event TokenBurned(address burnAddress, uint256 amountOfTokens);
     event SetTokenTransfer(bool transfer);
