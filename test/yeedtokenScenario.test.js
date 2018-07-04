@@ -15,7 +15,7 @@ const { expectThrow } = require('./helper.js')
  const DEBUG_MODE = 0 // if(DEBUG_MODE) console.log()
 
 contract('YeedToken Scenario...', accounts => {
-    const SUPPLY_AMOUNT = 10000000000 // 100억개
+    const SUPPLY_AMOUNT = 10000000000 * (10**18) // 100억개
 
     let instance
 
