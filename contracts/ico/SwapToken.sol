@@ -65,7 +65,7 @@ contract  SwapToken{
 
     function swapAbleToken()
     public
-    constant
+    view
     returns (uint256)
     {
         return newToken.allowance(tokenOwner, this);
