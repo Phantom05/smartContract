@@ -28,13 +28,11 @@ contract  SwapToken{
         _;
     }
 
-    // Check Token Not Setup
     modifier isNotSetup() {
         require (!setup_token);
         _;
     }
 
-    // init Contract
     constructor()
     public
     {
