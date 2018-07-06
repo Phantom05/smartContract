@@ -10,6 +10,8 @@ contract  SwapToken{
 
     address public owner;
     bool public swap_able;
+    bool public setup_token;
+
     event Swap(address sender, uint256 amount);
     event SwapAble(bool swapable);
 
@@ -25,6 +27,12 @@ contract  SwapToken{
         _;
     }
 
+    // Check Token Not Setup
+    modifier isNotSetup() {
+        require(!setup_token);
+        _;
+    }
+
     // init Contract
     constructor()
     public
@@ -33,15 +41,17 @@ contract  SwapToken{
         swap_able = false;
     }
 
-    // Setup Token Setup
+    // Token Setup
     function setupToken(address _oldToken, address _newToken, address _tokenOwner)
     public
+    isNotSetup
     isOwner
     {
         require(_oldToken != 0 && _newToken != 0 && _tokenOwner != 0);
         oldToken = ERC20(_oldToken);
         newToken = ERC20(_newToken);
         tokenOwner = _tokenOwner;
+        setup_token = true;
     }
 
     // swap start, stop
