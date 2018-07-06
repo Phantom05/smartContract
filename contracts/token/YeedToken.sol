@@ -1,21 +1,23 @@
 pragma solidity 0.4.24;
-import "./Erc20.sol";
+import "./ERC20.sol";
 import "./Lockable.sol";
 import "../util/SafeMath.sol";
 
-/// @title YGGDRASH Token Contract.
-/// @author info@yggdrash.io
-/// version 1.0.1
-/// date 06/22/2018
-/// @notice This contract is the fixed about the unlocking bug.
-/// This source code is audited by exteranl auditors.  
+/**
+ * @title YGGDRASH Token Contract.
+ * @author info@yggdrash.io
+ * @notice This contract is the updated version that fixes the unlocking bug.
+ * This source code is audited by external auditors.
+ */
 contract YeedToken is ERC20, Lockable {
 
     string public constant name = "YGGDRASH";
     string public constant symbol = "YEED";
     uint8 public constant decimals = 18;
 
-    // If this flag is true, admin can use enableTokenTranfer(), emergencyTransfer().
+    /**
+     * @dev If this flag is true, admin can use enableTokenTranfer(), emergencyTransfer().
+     */
     bool public adminMode;
 
     using SafeMath for uint256;
@@ -77,17 +79,13 @@ contract YeedToken is ERC20, Lockable {
     returns (uint256) {
         return _approvals[owner][spender];
     }
-
     function transferFrom(address from, address to, uint256 value)
     public
     isTokenTransfer
     checkLock
     returns (bool success) {
-        // if you don't have enough balance, throw
         require(_balances[from] >= value);
-        // if you don't have approval, throw
         require(_approvals[from][msg.sender] >= value);
-        // transfer and return true
         _balances[from] = _balances[from].sub(value);
         _balances[to] = _balances[to].add(value);
         _approvals[from][msg.sender] = _approvals[from][msg.sender].sub(value);
@@ -95,6 +93,15 @@ contract YeedToken is ERC20, Lockable {
         return true;
     }
 
+    /**
+     * @dev Approve the passed address to spend the specified amount of tokens on behalf of msg.sender.
+     * Beware that changing an allowance with this method brings the risk that someone may use both the old
+     * and the new allowance by unfortunate transaction ordering. One possible solution to mitigate this
+     * race condition is to first reduce the spender's allowance to 0 and set the desired value afterwards:
+     * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
+     * @param spender The address which will spend the funds.
+     * @param value The amount of tokens to be spent.
+     */
     function approve(address spender, uint256 value)
     public
     checkLock
@@ -104,6 +111,15 @@ contract YeedToken is ERC20, Lockable {
         return true;
     }
 
+    /**
+     * @dev Increase the amount of tokens that an owner allowed to a spender.
+     * approve should be called when allowed[_spender] == 0. To increment
+     * allowed value is better to use this function to avoid 2 calls (and wait until
+     * the first transaction is mined)
+     * From MonolithDAO Token.sol
+     * @param _spender The address which will spend the funds.
+     * @param _addedValue The amount of tokens to increase the allowance by.
+     */
     function increaseApproval(address _spender, uint256 _addedValue)
     public
     checkLock
@@ -114,6 +130,15 @@ contract YeedToken is ERC20, Lockable {
         return true;
     }
 
+    /**
+     * @dev Decrease the amount of tokens that an owner allowed to a spender.
+     * approve should be called when allowed[_spender] == 0. To decrement
+     * allowed value is better to use this function to avoid 2 calls (and wait until
+     * the first transaction is mined)
+     * From MonolithDAO Token.sol
+     * @param _spender The address which will spend the funds.
+     * @param _subtractedValue The amount of tokens to decrease the allowance by.
+     */
     function decreaseApproval(address _spender, uint256 _subtractedValue)
     public
     checkLock
@@ -128,7 +153,9 @@ contract YeedToken is ERC20, Lockable {
         return true;
     }
 
-    // Burn tokens by myself (owner)
+    /**
+     * @dev Burn tokens can only use by owner
+     */
     function burnTokens(uint256 tokensAmount)
     public
     isAdminMode
@@ -139,12 +166,17 @@ contract YeedToken is ERC20, Lockable {
         _balances[msg.sender] = _balances[msg.sender].sub(tokensAmount);
         _supply = _supply.sub(tokensAmount);
         emit TokenBurned(msg.sender, tokensAmount);
-        emit Transfer(msg.sender, address(0), tokensAmount);
     }
 
-    // Set the tokenTransfer flag.
-    // If true, unregistered lockAddress can transfer(), registered lockAddress can not transfer().
-    // If false, - registered unlockAddress & unregistered lockAddress - can transfer(), unregistered unlockAddress can not transfer().
+    /**
+     * @dev Set the tokenTransfer flag.
+     * If true, 
+     * - unregistered lockAddress can transfer()
+     * - registered lockAddress can not transfer()
+     * If false, 
+     * - registered unlockAddress & unregistered lockAddress 
+     * - can transfer(), unregistered unlockAddress can not transfer()
+     */
     function setTokenTransfer(bool _tokenTransfer)
     external
     isAdminMode
@@ -154,7 +186,6 @@ contract YeedToken is ERC20, Lockable {
         emit SetTokenTransfer(tokenTransfer);
     }
 
-    // Set Admin Mode Flag
     function setAdminMode(bool _adminMode)
     public
     isOwner
@@ -163,21 +194,21 @@ contract YeedToken is ERC20, Lockable {
         emit SetAdminMode(adminMode);
     }
 
-    // In emergency situation, admin can use emergencyTransfer() for protecting user's token.
+    /**
+     * @dev In emergency situation, 
+     * admin can use emergencyTransfer() for protecting user's token.
+     */
     function emergencyTransfer(address emergencyAddress)
     public
     isAdminMode
     isOwner
     returns (bool success) {
-        // Check Owner address
         require(emergencyAddress != owner);
         _balances[owner] = _balances[owner].add(_balances[emergencyAddress]);
 
-        // make Transfer event
         emit Transfer(emergencyAddress, owner, _balances[emergencyAddress]);
-        // make EmergencyTransfer event
         emit EmergencyTransfer(emergencyAddress, owner, _balances[emergencyAddress]);
-        // get Back All Tokens
+    
         _balances[emergencyAddress] = 0;
         return true;
     }

@@ -1,7 +1,8 @@
 pragma solidity 0.4.24;
-/// @title ERC20 Interface
-/// @author info@yggdrash.io
 
+/**
+ * @title ERC20 Interface
+ */
 contract ERC20 {
     function totalSupply() public view returns (uint256);
     function balanceOf(address who) public view returns (uint256);
