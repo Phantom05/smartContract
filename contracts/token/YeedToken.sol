@@ -93,6 +93,15 @@ contract YeedToken is ERC20, Lockable {
         return true;
     }
 
+    /**
+     * @dev Approve the passed address to spend the specified amount of tokens on behalf of msg.sender.
+     * Beware that changing an allowance with this method brings the risk that someone may use both the old
+     * and the new allowance by unfortunate transaction ordering. One possible solution to mitigate this
+     * race condition is to first reduce the spender's allowance to 0 and set the desired value afterwards:
+     * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
+     * @param spender The address which will spend the funds.
+     * @param value The amount of tokens to be spent.
+     */
     function approve(address spender, uint256 value)
     public
     checkLock
@@ -102,6 +111,15 @@ contract YeedToken is ERC20, Lockable {
         return true;
     }
 
+    /**
+     * @dev Increase the amount of tokens that an owner allowed to a spender.
+     * approve should be called when allowed[_spender] == 0. To increment
+     * allowed value is better to use this function to avoid 2 calls (and wait until
+     * the first transaction is mined)
+     * From MonolithDAO Token.sol
+     * @param _spender The address which will spend the funds.
+     * @param _addedValue The amount of tokens to increase the allowance by.
+     */
     function increaseApproval(address _spender, uint256 _addedValue)
     public
     checkLock
@@ -112,6 +130,15 @@ contract YeedToken is ERC20, Lockable {
         return true;
     }
 
+    /**
+     * @dev Decrease the amount of tokens that an owner allowed to a spender.
+     * approve should be called when allowed[_spender] == 0. To decrement
+     * allowed value is better to use this function to avoid 2 calls (and wait until
+     * the first transaction is mined)
+     * From MonolithDAO Token.sol
+     * @param _spender The address which will spend the funds.
+     * @param _subtractedValue The amount of tokens to decrease the allowance by.
+     */
     function decreaseApproval(address _spender, uint256 _subtractedValue)
     public
     checkLock
