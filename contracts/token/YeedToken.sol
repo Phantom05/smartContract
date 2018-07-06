@@ -1,5 +1,5 @@
 pragma solidity 0.4.24;
-import "./Erc20.sol";
+import "./ERC20.sol";
 import "./Lockable.sol";
 import "../util/SafeMath.sol";
 

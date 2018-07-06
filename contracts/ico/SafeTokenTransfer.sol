@@ -1,5 +1,5 @@
 pragma solidity 0.4.24;
-import "../token/Erc20.sol";
+import "../token/ERC20.sol";
 import "../util/SafeMath.sol";
 
 contract SafeTokenTransfer {
