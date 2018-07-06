@@ -1,4 +1,4 @@
-# YGGDRASH CROWDSALE SmatrContract In Ethereum
+# YGGDRASH CROWDSALE SmartContract In Ethereum
 ## Solidity compiler
 - build Version : 0.4.24+commit.e67f0147.Emscripten.clang
 

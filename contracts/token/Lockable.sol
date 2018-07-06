@@ -22,7 +22,7 @@ contract Lockable {
 
     // check whether can tranfer tokens or not.
     modifier isTokenTransfer {
-        // if token transfer is not allow
+        // if token transfer is not allowed
         if(!tokenTransfer) {
             require(unlockAddress[msg.sender]);
         }
