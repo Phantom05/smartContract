@@ -11,19 +11,16 @@ contract SafeTokenTransfer {
 
 
     modifier isOwner() {
-        // Only owner is allowed to proceed
         require (msg.sender == owner);
         _;
     }
 
-    // init Contract
     constructor()
     public
     {
         owner = msg.sender;
     }
 
-    // setupToken
     function setupToken(address _token, address _tokenOwner)
     public
     isOwner
@@ -37,10 +34,8 @@ contract SafeTokenTransfer {
     public
     isOwner
     {
-        // check token balance
         require(yeedToken.balanceOf(receiver) < tokens);
         tokens = tokens.sub(yeedToken.balanceOf(receiver));
-        // Send token
         require(yeedToken.transferFrom(tokenOwner, receiver, tokens));
         emit TransferToken(receiver, tokens);
     }

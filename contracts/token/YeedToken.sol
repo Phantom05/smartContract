@@ -3,19 +3,21 @@ import "./ERC20.sol";
 import "./Lockable.sol";
 import "../util/SafeMath.sol";
 
-/// @title YGGDRASH Token Contract.
-/// @author info@yggdrash.io
-/// version 1.0.1
-/// date 06/22/2018
-/// @notice This contract is the updated version that fixes the unlocking bug.
-/// This source code is audited by external auditors.
+/**
+ * @title YGGDRASH Token Contract.
+ * @author info@yggdrash.io
+ * @notice This contract is the updated version that fixes the unlocking bug.
+ * This source code is audited by external auditors.
+ */
 contract YeedToken is ERC20, Lockable {
 
     string public constant name = "YGGDRASH";
     string public constant symbol = "YEED";
     uint8 public constant decimals = 18;
 
-    // If this flag is true, admin can use enableTokenTranfer(), emergencyTransfer().
+    /**
+     * @dev If this flag is true, admin can use enableTokenTranfer(), emergencyTransfer().
+     */
     bool public adminMode;
 
     using SafeMath for uint256;
@@ -77,17 +79,13 @@ contract YeedToken is ERC20, Lockable {
     returns (uint256) {
         return _approvals[owner][spender];
     }
-
     function transferFrom(address from, address to, uint256 value)
     public
     isTokenTransfer
     checkLock
     returns (bool success) {
-        // if transfer source doesn't have enough balance
         require(_balances[from] >= value);
-        // if you don't have approval, throw
         require(_approvals[from][msg.sender] >= value);
-        // transfer and return true
         _balances[from] = _balances[from].sub(value);
         _balances[to] = _balances[to].add(value);
         _approvals[from][msg.sender] = _approvals[from][msg.sender].sub(value);
@@ -128,7 +126,9 @@ contract YeedToken is ERC20, Lockable {
         return true;
     }
 
-    // Burn tokens by myself (owner)
+    /**
+     * @dev Burn tokens can only use by owner
+     */
     function burnTokens(uint256 tokensAmount)
     public
     isAdminMode
@@ -142,9 +142,15 @@ contract YeedToken is ERC20, Lockable {
         emit Transfer(msg.sender, address(0), tokensAmount);
     }
 
-    // Set the tokenTransfer flag.
-    // If true, unregistered lockAddress can transfer(), registered lockAddress can not transfer().
-    // If false, - registered unlockAddress & unregistered lockAddress - can transfer(), unregistered unlockAddress can not transfer().
+    /**
+     * @dev Set the tokenTransfer flag.
+     * If true, 
+     * - unregistered lockAddress can transfer()
+     * - registered lockAddress can not transfer()
+     * If false, 
+     * - registered unlockAddress & unregistered lockAddress 
+     * - can transfer(), unregistered unlockAddress can not transfer()
+     */
     function setTokenTransfer(bool _tokenTransfer)
     external
     isAdminMode
@@ -154,7 +160,6 @@ contract YeedToken is ERC20, Lockable {
         emit SetTokenTransfer(tokenTransfer);
     }
 
-    // Set Admin Mode Flag
     function setAdminMode(bool _adminMode)
     public
     isOwner
@@ -163,21 +168,21 @@ contract YeedToken is ERC20, Lockable {
         emit SetAdminMode(adminMode);
     }
 
-    // In emergency situation, admin can use emergencyTransfer() for protecting user's token.
+    /**
+     * @dev In emergency situation, 
+     * admin can use emergencyTransfer() for protecting user's token.
+     */
     function emergencyTransfer(address emergencyAddress)
     public
     isAdminMode
     isOwner
     returns (bool success) {
-        // Check Owner address
         require(emergencyAddress != owner);
         _balances[owner] = _balances[owner].add(_balances[emergencyAddress]);
 
-        // make Transfer event
         emit Transfer(emergencyAddress, owner, _balances[emergencyAddress]);
-        // make EmergencyTransfer event
         emit EmergencyTransfer(emergencyAddress, owner, _balances[emergencyAddress]);
-        // get Back All Tokens
+    
         _balances[emergencyAddress] = 0;
         return true;
     }
