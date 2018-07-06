@@ -1,7 +1,10 @@
 pragma solidity 0.4.24;
-import "../token/Erc20.sol";
+import "../token/ERC20.sol";
 import "../util/SafeMath.sol";
 
+/**
+ * @title SwapToken
+ */
 contract  SwapToken{
     using SafeMath for uint256;
     ERC20 public oldToken;
@@ -16,12 +19,10 @@ contract  SwapToken{
     event SwapAble(bool swapable);
 
     modifier isOwner() {
-        // Only owner is allowed to proceed
         require (msg.sender == owner);
         _;
     }
 
-    // Check SwapAble
     modifier isSwap() {
         require (swap_able);
         _;
@@ -54,7 +55,6 @@ contract  SwapToken{
         setup_token = true;
     }
 
-    // swap start, stop
     function swapAble(bool _swap_able)
     public
     isOwner
@@ -63,7 +63,6 @@ contract  SwapToken{
         emit SwapAble(_swap_able);
     }
 
-    // withdraw old token
     function withdrawOldToken(address to, uint256 amount)
     public
     isOwner
@@ -86,11 +85,8 @@ contract  SwapToken{
     isSwap
     returns (bool success)
     {
-        // check allowance newToken
         require(newToken.allowance(tokenOwner, this) >= amount);
-        // getBack Token
         require(oldToken.transferFrom(msg.sender, this, amount));
-        // swap new Token
         require(newToken.transferFrom(tokenOwner, msg.sender, amount));
         emit Swap(msg.sender, amount);
         return true;
