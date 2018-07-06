@@ -30,7 +30,7 @@ contract  SwapToken{
 
     // Check Token Not Setup
     modifier isNotSetup() {
-        require(!setup_token);
+        require (!setup_token);
         _;
     }
 
@@ -42,7 +42,6 @@ contract  SwapToken{
         swap_able = false;
     }
 
-    // Token Setup
     function setupToken(address _oldToken, address _newToken, address _tokenOwner)
     public
     isNotSetup
