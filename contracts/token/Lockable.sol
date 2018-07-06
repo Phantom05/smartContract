@@ -1,7 +1,7 @@
 pragma solidity 0.4.24;
  
 /**
- * @title Loackable Token
+ * @title Lockable Token
  * @author info@yggdrash.io
  */
 contract Lockable {
