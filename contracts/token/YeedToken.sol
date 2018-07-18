@@ -79,11 +79,13 @@ contract YeedToken is ERC20, Lockable {
     returns (uint256) {
         return _approvals[owner][spender];
     }
+
     function transferFrom(address from, address to, uint256 value)
     public
     isTokenTransfer
     checkLock
     returns (bool success) {
+        require(!lockAddress[from]);
         require(_balances[from] >= value);
         require(_approvals[from][msg.sender] >= value);
         _balances[from] = _balances[from].sub(value);
